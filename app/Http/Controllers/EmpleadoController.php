@@ -15,8 +15,8 @@ class EmpleadoController extends Controller
      */
     public function index()
     {
-        $datos['empleados']=Empleado::paginate();
-        return view('empleado.index',$datos);
+        $datos['empleados'] = Empleado::all();
+        return view('empleado.index', $datos);
     }
 
     /**
@@ -26,7 +26,7 @@ class EmpleadoController extends Controller
      */
     public function create()
     {
-        
+
         return view('empleado.create');
     }
 
@@ -38,31 +38,34 @@ class EmpleadoController extends Controller
      */
     public function store(Request $request)
     {
-        $campos=[
-            'Nombre'=>'required|string|max:100',
-            'ApellidoPaterno'=>'required|string|max:100',
-            'ApellidoMaterno'=>'required|string|max:100',
-            'Correo'=>'required|email',
-            'Foto'=>'required|max:10000' 
-        ];
-        $mensaje =[
-            'required'=>'El :attribute es requerido',
-            'Foto.required'=>'La foto requerida'
-        ];
-        
-        $this->validate($request,$campos,$mensaje);     
-        
-        //$datosEmpleado = request()->all();
         $datosEmpleado = request()->except('_token');
-        //Empleado::insert($datosEmpleado);
-        if($request-> hasFile('Foto')){
-            
-            $datosEmpleado['Foto']=$request->file('Foto')->store('public');
-            
-        }
-        Empleado::insert($datosEmpleado);
+        /*$campos = [
+            'Nombre' => 'required|string|max:100',
+            'ApellidoPaterno' => 'required|string|max:100',
+            'ApellidoMaterno' => 'required|string|max:100',
+            'Correo' => 'required|email'
+        ];
+        $mensaje = [
+            'required' => 'El :attribute es requerido',
+            //'Foto.required' => 'La foto requerida'
+        ];
+
+        $this->validate($request, $campos, $mensaje);
+        */
+        //$image = $request->file('imagen');
+        //$image->move('uploads', $image->getClientOriginalName());
+        //$nombre_tabla->imagen = image->getClientOriginalName();
+
+         
         
-        return redirect('empleado')->with('mensaje','Empleado agregado con exito');
+        if ($request->hasFile('Foto')) { 
+            
+            $datosEmpleado['Foto'] = $request->file('Foto')->store('uploads', 'public');
+        }
+
+        Empleado::insert($datosEmpleado);
+        return response()->json($datosEmpleado);
+        //return redirect('empleado')->with('mensaje', 'Empleado agregado con exito');
     }
 
     /**
@@ -84,7 +87,7 @@ class EmpleadoController extends Controller
      */
     public function edit($id)
     {
-        $empleado=Empleado::findOrFail($id);
+        $empleado = Empleado::findOrFail($id);
 
         return view('empleado.edit', compact('empleado'));
     }
@@ -98,23 +101,23 @@ class EmpleadoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $datosEmpleado = request()->except(['_token','_method']);
-        
-        if($request-> hasFile('Foto')){
-            $empleado = Empleado::findOrFail($id);
-            Storage::delete('public/'.$empleado->Foto);
+        $empleado = Empleado::findOrFail($id);
+        $datosEmpleado1 = request()->except(['_token', '_method']);
+        if ($request->hasFile('Foto')) {
 
-            $datosEmpleado['Foto']=$request->file('Foto')->store('uploads','public');
+            Storage::delete('public/' . $empleado->Foto);
+
+            $datosEmpleado1['Foto'] = $request->file('Foto')->store('uploads', 'public');
         }
-        
-        Empleado::where('id', '=' , $id)->update($datosEmpleado);
+
+        Empleado::where('id', '=', $id)->update($datosEmpleado1);
 
         // $empleado = Empleado::findOrFail($id);
         // return view('empleado.index', compact('empleado'));
-        $empleado = Empleado::findOrFail($id);
+
         // $datos['empleados']=Empleado::paginate(5);
         // return view('empleado.', compact('datos'));
-        return redirect('empleado')->with('mensaje','Empleado modificado');
+        return redirect('empleado')->with('mensaje', 'Empleado modificado');
     }
 
     /**
@@ -126,13 +129,13 @@ class EmpleadoController extends Controller
     public function destroy($id)
     {
         $empleado = Empleado::findOrFail($id);
-        if(Storage::delete('public/'.$empleado->Foto)){
+        if (Storage::delete('public/' . $empleado->Foto)) {
             Empleado::destroy($id);
-        }else{
+        } else {
             Empleado::destroy($id);
         }
-        
-        
-        return redirect('empleado')->with('mensaje','Empleado borrado');
+
+
+        return redirect('empleado')->with('mensaje', 'Empleado borrado');
     }
 }

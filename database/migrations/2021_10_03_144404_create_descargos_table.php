@@ -14,7 +14,15 @@ class CreateDescargosTable extends Migration
     public function up()
     {
         Schema::create('descargos', function (Blueprint $table) {
+
             $table->id();
+            $table->string('departamento');
+            $table->string('nombreSolicitante');
+            $table->string('cargo');
+            $table->string('nombreDestinatario');
+            $table->timestamp('fecha');
+            $table->timestamp('fechaDesde');
+            $table->timestamp('fechaHasta');
             $table->timestamps();
         });
     }

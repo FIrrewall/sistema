@@ -15,6 +15,8 @@ class CreateInventarisTable extends Migration
     {
         Schema::create('inventaris', function (Blueprint $table) {
             $table->id();
+            $table->string('descripcion');
+            $table->timestamp('fecha');
             $table->timestamps();
         });
     }

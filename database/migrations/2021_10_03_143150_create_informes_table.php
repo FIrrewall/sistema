@@ -14,7 +14,21 @@ class CreateInformesTable extends Migration
     public function up()
     {
         Schema::create('informes', function (Blueprint $table) {
-            $table->id();
+            $table->engine="InnoDB";
+            $table->bigIncrements('id');
+            $table->string('tipoInforme');
+            $table->string('departamento');
+            $table->string('cliente');
+            $table->string('direccion');
+            $table->timestamp('fecha');
+            $table->string('nombreAgencia');
+            $table->string('nombreAtm');
+            $table->string('modeloPanel');
+            $table->integer('lineaTelefonica');
+            $table->string('ipModulo');
+            $table->text('observaciones');
+            $table->text('recomendaciones');
+            $table->boolean('estado');
             $table->timestamps();
         });
     }

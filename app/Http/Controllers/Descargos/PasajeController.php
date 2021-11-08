@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Descargos;
 
-use App\Models\Inventari;
+use App\Http\Controllers\Controller;
+use App\Models\Pasaje;
 use Illuminate\Http\Request;
 
-class InventariController extends Controller
+class PasajeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +15,7 @@ class InventariController extends Controller
      */
     public function index()
     {
-        //
+        return view('pasaje.index');
     }
 
     /**
@@ -41,10 +42,10 @@ class InventariController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Inventari  $inventari
+     * @param  \App\Models\Pasaje  $pasaje
      * @return \Illuminate\Http\Response
      */
-    public function show(Inventari $inventari)
+    public function show(Pasaje $pasaje)
     {
         //
     }
@@ -52,10 +53,10 @@ class InventariController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Inventari  $inventari
+     * @param  \App\Models\Pasaje  $pasaje
      * @return \Illuminate\Http\Response
      */
-    public function edit(Inventari $inventari)
+    public function edit(Pasaje $pasaje)
     {
         //
     }
@@ -64,10 +65,10 @@ class InventariController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Inventari  $inventari
+     * @param  \App\Models\Pasaje  $pasaje
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Inventari $inventari)
+    public function update(Request $request, Pasaje $pasaje)
     {
         //
     }
@@ -75,10 +76,10 @@ class InventariController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Inventari  $inventari
+     * @param  \App\Models\Pasaje  $pasaje
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Inventari $inventari)
+    public function destroy(Pasaje $pasaje)
     {
         //
     }

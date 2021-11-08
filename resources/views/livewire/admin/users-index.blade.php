@@ -7,7 +7,7 @@
 @endsection
     
 @section('content')
-
+<br/>
     <div class = "card">
         <div class = "card-body">
             <table class = "table table-striped" id="usuarios">
@@ -42,7 +42,7 @@
                 {data: 'id'},
                 {data: 'name'},
                 {data: 'email'},
-                {defaultContent:"<a class='btn btn-dark' href='{{url('/users/ddd/edit') }}'>Editar</a> <a class='btn btn-danger' href=''>Eliminar</a>" },
+                {defaultContent:"<a class='btn btn-dark' href='{{url('/users/.$id')}}' }}'>Editar</a> <a class='btn btn-danger' href=''>Eliminar</a>" },
             ],
             responsive: true,
             autoWidth: false,

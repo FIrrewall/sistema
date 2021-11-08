@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Descargos;
 
-use App\Models\Descargo;
+use App\Http\Controllers\Controller;
+use App\Models\Gasto;
 use Illuminate\Http\Request;
 
-class DescargoController extends Controller
+class GastoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +15,7 @@ class DescargoController extends Controller
      */
     public function index()
     {
-        //
+        return view('gasto.index');
     }
 
     /**
@@ -41,10 +42,10 @@ class DescargoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Descargo  $descargo
+     * @param  \App\Models\Gasto  $gasto
      * @return \Illuminate\Http\Response
      */
-    public function show(Descargo $descargo)
+    public function show(Gasto $gasto)
     {
         //
     }
@@ -52,10 +53,10 @@ class DescargoController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Descargo  $descargo
+     * @param  \App\Models\Gasto  $gasto
      * @return \Illuminate\Http\Response
      */
-    public function edit(Descargo $descargo)
+    public function edit(Gasto $gasto)
     {
         //
     }
@@ -64,10 +65,10 @@ class DescargoController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Descargo  $descargo
+     * @param  \App\Models\Gasto  $gasto
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Descargo $descargo)
+    public function update(Request $request, Gasto $gasto)
     {
         //
     }
@@ -75,10 +76,10 @@ class DescargoController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Descargo  $descargo
+     * @param  \App\Models\Gasto  $gasto
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Descargo $descargo)
+    public function destroy(Gasto $gasto)
     {
         //
     }

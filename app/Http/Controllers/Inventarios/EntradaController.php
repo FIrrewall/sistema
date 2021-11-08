@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Inventarios;
 
-use App\Models\Informe;
+use App\Http\Controllers\Controller;
+use App\Models\Entrada;
 use Illuminate\Http\Request;
 
-class InformeController extends Controller
+class EntradaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +15,7 @@ class InformeController extends Controller
      */
     public function index()
     {
-        //
+        return view('entrada.index');
     }
 
     /**
@@ -41,10 +42,10 @@ class InformeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Informe  $informe
+     * @param  \App\Models\Entrada  $entrada
      * @return \Illuminate\Http\Response
      */
-    public function show(Informe $informe)
+    public function show(Entrada $entrada)
     {
         //
     }
@@ -52,10 +53,10 @@ class InformeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Informe  $informe
+     * @param  \App\Models\Entrada  $entrada
      * @return \Illuminate\Http\Response
      */
-    public function edit(Informe $informe)
+    public function edit(Entrada $entrada)
     {
         //
     }
@@ -64,10 +65,10 @@ class InformeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Informe  $informe
+     * @param  \App\Models\Entrada  $entrada
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Informe $informe)
+    public function update(Request $request, Entrada $entrada)
     {
         //
     }
@@ -75,10 +76,10 @@ class InformeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Informe  $informe
+     * @param  \App\Models\Entrada  $entrada
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Informe $informe)
+    public function destroy(Entrada $entrada)
     {
         //
     }

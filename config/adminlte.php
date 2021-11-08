@@ -45,8 +45,8 @@ return [
     |
     */
 
-    'logo' => '<b>ITC</b>SI',
-    'logo_img' => 'vendor/adminlte/dist/img/logo.png',
+    'logo' => '<b>SIPITC</b>',
+    'logo_img' => 'vendor/adminlte/dist/img/inicio.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
@@ -240,7 +240,7 @@ return [
         [
             'text'        => 'Inicio',
             'url'         => '',
-            'icon'        => 'fas fa-tachometer-alt fa-fw',
+            'icon'        => 'fas fa-home',
         ],
 
         [
@@ -251,69 +251,139 @@ return [
 
         ['header' => 'ADMINISTRADOR'],
         [
-            'text' => 'profile',
+            'text' => 'Perfil Usuario',
             'url'  => 'admin/settings',
             'icon' => 'fas fa-fw fa-user',
         ],
         [
-            'text' => 'change_password',
+            'text' => 'Cambiar Contraseña',
             'url'  => 'admin/settings',
             'icon' => 'fas fa-fw fa-lock',
         ],
+
+        ['header' => 'PROCESOS'],
         [
-            'text'    => 'multilevel',
-            'icon'    => 'fas fa-fw fa-share',
+            'text' => 'Informes',
+            'url'  => '#',
+            'icon' => 'fas fa-book-open',
             'submenu' => [
                 [
-                    'text' => 'level_one',
-                    'url'  => '#',
+                    'text' => 'Lista de Informes',
+                    'url'  => 'informes',
+                    'icon' => 'fas fa-clipboard-list',
                 ],
                 [
-                    'text'    => 'level_one',
-                    'url'     => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url'  => '#',
-                        ],
-                        [
-                            'text'    => 'level_two',
-                            'url'     => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url'  => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url'  => '#',
-                                ],
-                            ],
-                        ],
-                    ],
+                    'text' => 'Crear Informe',
+                    'url'  => 'informes/create',
+                    'icon' => 'fas fa-clipboard',
                 ],
                 [
-                    'text' => 'level_one',
-                    'url'  => '#',
+                    'text' => 'Trabajos Pendientes',
+                    'url'  => 'work',
+                    'icon' => 'fas fa-tasks',
                 ],
             ],
         ],
-        ['header' => 'labels'],
+
         [
-            'text'       => 'important',
-            'icon_color' => 'red',
-            'url'        => '#',
+            'text' => 'Inventarios',
+            'url'  => '#',
+            'icon' => 'fas fa-clipboard-check',
+            'submenu' => [
+                [
+                    'text' => 'Lista de Inventarios',
+                    'url'  => 'inventarios',
+                    'icon' => 'fas fa-clipboard-list',
+                ],
+                [
+                    'text' => 'Existentes',
+                    'url'  => 'existentes',
+                    'icon' => 'fas fa-list-alt',
+                ],
+                [
+                    'text' => 'Entradas',
+                    'url'  => 'entradas',
+                    'icon' => 'fas fa-indent',
+                ],
+                [
+                    'text' => 'Salidas',
+                    'url'  => 'salidas',
+                    'icon' => 'fas fa-outdent',
+                ],
+                [
+                    'text' => 'PDF Salida',
+                    'url'  => '#',
+                    'icon' => 'fas fa-print',
+                ],
+            ],
         ],
+
         [
-            'text'       => 'warning',
-            'icon_color' => 'yellow',
-            'url'        => '#',
+            'text' => 'Descargos',
+            'url'  => '#',
+            'icon' => 'fas fa-eject',
+            'submenu' => [
+                [
+                    'text' => 'Lista Descargos',
+                    'url'  => 'descargos',
+                    'icon' => 'fas fa-clipboard-list',
+                ],
+                [
+                    'text' => 'Caja Chica',
+                    'url'  => 'cajas',
+                    'icon' => 'fas fa-box-open',
+                ],
+                [
+                    'text' => 'Gastos',
+                    'url'  => 'gastos',
+                    'icon' => 'fas fa-eraser',
+                ],
+                [
+                    'text' => 'Pasajes',
+                    'url'  => 'pasajes',
+                    'icon' => 'fas fa-bus',
+                ],
+                [
+                    'text' => 'Viaticos',
+                    'url'  => 'viaticos',
+                    'icon' => 'fas fa-money-bill-alt',
+                ],
+            ],
         ],
+
         [
-            'text'       => 'information',
-            'icon_color' => 'cyan',
-            'url'        => '#',
+            'text' => 'Control de Procesos',
+            'url'  => '#',
+            'icon' => 'fas fa-tasks',
+            'submenu' => [
+                [
+                    'text' => 'Gestion de Informes',
+                    'url'  => '#',
+                    'icon' => 'fas fa-book',
+                ],
+                [
+                    'text' => 'Resumen de Inventario',
+                    'url'  => '#',
+                    'icon' => 'fas fa-cube',
+                ],
+                [
+                    'text' => 'Descargos por Verificar',
+                    'url'  => '#',
+                    'icon' => 'fas fa-bell',
+                ],
+                [
+                    'text' => 'Trabajos Pendientes',
+                    'url'  => '#',
+                    'icon' => 'fas fa-hammer',
+                ],
+            ],
         ],
+
+
+
+
+
+        
     ],
 
     /*

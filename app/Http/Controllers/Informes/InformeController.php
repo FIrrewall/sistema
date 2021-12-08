@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Informe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Gate;
 class InformeController extends Controller
 {
     /**
@@ -16,6 +16,7 @@ class InformeController extends Controller
      */
     public function index()
     {
+        abort_if(Gate::denies('informes_index'),403);
         $datos['informes']=Informe::all();
         return view('informe.index',$datos);
     }
@@ -29,6 +30,7 @@ class InformeController extends Controller
      */
     public function create()
     {
+        abort_if(Gate::denies('informes_create'),403);
         return view('informe.create');
     }
 
@@ -58,9 +60,10 @@ class InformeController extends Controller
         //$datosEmpleado = request()->all();
         $datosInforme = request()->except('_token');
         //Empleado::insert($datosEmpleado);
-        
         Informe::insert($datosInforme);
-        return redirect('hdds')->with('mensaje');
+        //$post = request()->except('_token','tipoInforme','departamento','cliente','direccion','fecha','nombreAgencia','nombreAtm','modeloPanel','lineaTelefonica','ipModulo','observaciones','recomendaciones','estado');
+        //serialize($post);
+        return redirect('informes')->with('mensaje');
         //return view('hdds/{$informes->id}')->with('mensaje');
     }
 
@@ -83,6 +86,7 @@ class InformeController extends Controller
      */
     public function edit($id)
     {
+        abort_if(Gate::denies('informes_edit'),403);
         $informe=Informe::findOrFail($id);
 
         return view('informe.edit', compact('informe'));
@@ -113,10 +117,10 @@ class InformeController extends Controller
      */
     public function destroy($id)
     {
-        
+        abort_if(Gate::denies('informes_destroy'),403);
         Informe::destroy($id);
         
-        return redirect('informes')->with('mensaje','Empleado borrado');
+        return redirect('informes')->with('mensaje','Informe borrado');
     }
 
 

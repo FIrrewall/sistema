@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Numero;
 use App\Models\Informe;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 class NumeroController extends Controller
 {
     /**
@@ -14,14 +14,11 @@ class NumeroController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        //$users = In::all();
-        $datos['contactos']=Numero::all();
-        $informes = Informe::latest('id')->first();
-        //return $informes;
-        return view('numero.index',$datos,compact('informes'));
-        //,$informes
+        abort_if(Gate::denies('numeros_index'),403);
+        $datosNumero['contactos'] = Numero::all();
+        return view('numero.index',$datosNumero,compact('id'));
     }
 
     /**
@@ -31,6 +28,7 @@ class NumeroController extends Controller
      */
     public function create()
     {
+        abort_if(Gate::denies('numeros_create'),403);
         return view('numero.create');
     }
 
@@ -43,8 +41,8 @@ class NumeroController extends Controller
     public function store(Request $request)
     {
         $campos=[
-            'nombre'=>'required|string|max:100',
-            'telefono'=>'required|integer|max:100'
+            'nombre'=>'required|string|max:1000',
+            'telefono'=>'required|integer|max:1000000000'
         ];
         $mensaje =[
             'required'=>'El :attribute es requerido'
@@ -53,8 +51,8 @@ class NumeroController extends Controller
         $this->validate($request,$campos,$mensaje);     
         $datosNumero= request()->except('_token'); 
         Numero::insert($datosNumero);
-        
-        return redirect('numeros')->with('mensaje','Equipo agregado con exito');
+        $post = request()->input('informe_id');
+        return redirect('/registroNumero/'.$post)->with('mensaje','Equipo agregado con exito');
     }
 
     /**
@@ -76,6 +74,7 @@ class NumeroController extends Controller
      */
     public function edit($id)
     {
+        abort_if(Gate::denies('numeros_edit'),403);
         $contacto  = Numero::findOrFail($id);
         return view('numero.edit', compact('contacto'));
     }
@@ -91,7 +90,8 @@ class NumeroController extends Controller
     {
         $datosNumero = request()->except(['_token','_method','informe_id']);
         Numero::where('id', '=' , $id)->update($datosNumero);
-        return redirect('numeros')->with('mensaje','Datos de Equipo Modificado');
+        $post = request()->input('informe_id');
+        return redirect('/registroNumero/'.$post)->with('mensaje','Equipo agregado con exito');
     }
 
     /**
@@ -102,8 +102,10 @@ class NumeroController extends Controller
      */
     public function destroy($id)
     {
-        $inCctv = Numero::findOrFail($id);
-        Numero::destroy($id); 
-        return redirect('numeros')->with('mensaje','Equipo Eliminado');
+        abort_if(Gate::denies('numeros_destroy'),403);
+        $datosZona = Numero::findOrFail($id);
+        $idIn = $datosZona->informe_id;
+        Numero::destroy($id);
+        return redirect('/registroNumero/'.$idIn)->with('mensaje','Equipo Eliminado');
     }
 }

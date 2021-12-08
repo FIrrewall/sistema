@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
 @endsection
 
-
+@section('title','Informes')
 
 @section('content')
 <br />
@@ -24,10 +24,12 @@
             <center>INFORME</center>
         </h1>
         <div class="table-responsive">
-            <a href="{{ url('informes/create') }}" class="btn btn-success">Nuevo empleado</a>
+            @can('informes_create')
+            <a href="{{ url('informes/create') }}" class="btn btn-success">Nuevo informe</a>
+            @endcan
             <br />
             <br />
-            <table class="table table-striped" id="datos">
+            <table class="table table-striped"" id="datos">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -45,9 +47,9 @@
                     <tr>
                         <td>{{ $informe->id}}</td>
                         @if($informe->nombreAgencia == "")
-                        <td>{{ $informe->nombreAtm}}</td>
+                            <td>{{ $informe->nombreAtm}}</td>
                         @else
-                        <td>{{ $informe->nombreAgencia}}</td>
+                            <td>{{ $informe->nombreAgencia}}</td>
                         @endif
                         <td>{{ $informe->tipoInforme}}</td>
                         <td>{{ $informe->departamento}}</td>
@@ -55,14 +57,32 @@
                         <td>{{ $informe->ipModulo}}</td>
                         <td>{{ $informe->estado}}</td>
                         <td>
+                            @can('informes_edit')
                             <a href="{{ url('/informes/'.$informe->id.'/edit') }}" class="btn btn-warning">
                                 Editar
                             </a>
+                            @endcan
+                            @can('informes_destroy')
                             <form action="{{ url('/informes/'.$informe->id) }}" class="d-inline" method="post">
                                 @csrf
                                 {{method_field('DELETE')}}
                                 <input class="btn btn-danger" type="submit" onclick="return confirm('¿Quieres borrar?')" value="Borrar">
                             </form>
+                            @endcan
+                            <!--AUMENTAR EL PERMISO Y ASIGNARLE AL ROL-->
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Ver
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="{{ url('/datosHdd/'.$informe->id) }}">HDD</a>
+                                <a class="dropdown-item" href="{{ url('/cctvInventario/'.$informe->id) }}">Inventario CCTV</a>
+                                <a class="dropdown-item" href="{{ url('/alarmaInventario/'.$informe->id) }}">Inventario Alarmas</a>
+                                <a class="dropdown-item" href="{{ url('/zonas/'.$informe->id) }}">Zonificacion</a>
+                                <a class="dropdown-item" href="{{ url('/alarmaUsuarios/'.$informe->id) }}">Usuarios de Alarmas</a>
+                                <a class="dropdown-item" href="{{ url('/registroNumero/'.$informe->id) }}">Registro de Numeros</a>
+                                <a class="dropdown-item" href="{{ url('/trabajos/'.$informe->id) }}">Trabajos realizados</a>
+                                <a class="dropdown-item" href="{{ url('/planosAgencias/'.$informe->id) }}">Planos</a>
+                            </div>
                         </td>
                     </tr>
                     @endforeach

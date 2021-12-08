@@ -7,7 +7,7 @@ use App\Models\TrabajosRealizado;
 use App\Models\Informe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Gate;
 class TrabajosRealizadoController extends Controller
 {
     /**
@@ -15,11 +15,11 @@ class TrabajosRealizadoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        $datos['trabajos']=TrabajosRealizado::all();
-        $informes = Informe::latest('id')->first();
-        return view('trabajo.index',$datos,compact('informes'));
+        abort_if(Gate::denies('trabajosRealizados_index'),403);
+        $datosTrabajo['trabajos'] = TrabajosRealizado::all();
+        return view('trabajo.index',$datosTrabajo,compact('id'));
     }
 
     /**
@@ -29,6 +29,7 @@ class TrabajosRealizadoController extends Controller
      */
     public function create()
     {
+        abort_if(Gate::denies('trabajosRealizados_create'),403);
         return view('trabajo.create');
     }
 
@@ -41,7 +42,8 @@ class TrabajosRealizadoController extends Controller
     public function store(Request $request)
     {
         $campos=[
-            'descripcion'=>'required|string|max:100'
+            'descripcion'=>'required|string|max:100',
+            'imagen' => 'required|image|max:2048'
         ];
         $mensaje =[
             'required'=>'El :attribute es requerido'
@@ -52,14 +54,17 @@ class TrabajosRealizadoController extends Controller
         //Empleado::insert($datosEmpleado); 
         if($request-> hasFile('imagen')){
             
-            $datosTrabajo['imagen']=$request->file('imagen')->store('uploads','public');
-            
+            $file = $request->file('imagen');
+            $nombre = date("Y-m-d",time())."_".$file->getClientOriginalName();
+            //$datosTrabajo['imagen']=$request->file('imagen')->store('uploads','public');
+            $datosTrabajo['imagen']=$file->storeAs('trabajos',$nombre,'public');
         }   
         TrabajosRealizado::insert($datosTrabajo);
-        
-        return redirect('trabajosRealizados')->with('mensaje','Equipo agregado con exito');
+        //return $datosTrabajo['imagen'];
+        $post = request()->input('informe_id');
+        return redirect('/trabajos/'.$post)->with('mensaje','Equipo agregado con exito');
     }
-
+//return redirect('numeros')->with('mensaje','Equipo agregado con exito');
     /**
      * Display the specified resource.
      *
@@ -79,6 +84,7 @@ class TrabajosRealizadoController extends Controller
      */
     public function edit($id)
     {
+        abort_if(Gate::denies('trabajosRealizados_edit'),403);
         $trabajo = TrabajosRealizado::findOrFail($id);
         return view('trabajo.edit', compact('trabajo'));
     }
@@ -97,18 +103,16 @@ class TrabajosRealizadoController extends Controller
         
         if($request-> hasFile('imagen')){
             Storage::delete('public/'.$trabajo->imagen);
-
-            $datosTrabajo['imagen'] = $request->file('imagen')->store('uploads','public');
+            $file = $request->file('imagen');
+            $nombre = date("Y-m-d",time())."_".$file->getClientOriginalName();
+            //$datosTrabajo['imagen']=$request->file('imagen')->store('uploads','public');
+            $datosTrabajo['imagen']=$file->storeAs('trabajos',$nombre,'public');
+            //$datosTrabajo['imagen'] = $request->file('imagen')->store('trabajos','public');
         }
         
         TrabajosRealizado::where('id', '=' , $id)->update($datosTrabajo);
-
-        // $empleado = Empleado::findOrFail($id);
-        // return view('empleado.index', compact('empleado'));
-        //$empleado = TrabajosRealizado::findOrFail($id);
-        // $datos['empleados']=Empleado::paginate(5);
-        // return view('empleado.', compact('datos'));
-        return redirect('trabajosRealizados')->with('mensaje','Datos de Equipo Modificado');
+        $post = request()->input('informe_id');
+        return redirect('/trabajos/'.$post)->with('mensaje','Equipo agregado con exito');
         
     }
 
@@ -120,8 +124,12 @@ class TrabajosRealizadoController extends Controller
      */
     public function destroy($id)
     {
-        //$inCctv = InventarioCctv::findOrFail($id);
-        TrabajosRealizado::destroy($id); 
-        return redirect('trabajosRealizados')->with('mensaje','Equipo Eliminado');
+        abort_if(Gate::denies('trabajosRealizados_destroy'),403);
+
+        $datosTrabajo = TrabajosRealizado::findOrFail($id);
+        $idIn = $datosTrabajo->informe_id;
+        TrabajosRealizado::destroy($id);
+        return redirect('/trabajos/'.$idIn)->with('mensaje','Equipo Eliminado');
+
     }
 }

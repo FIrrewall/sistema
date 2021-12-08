@@ -23,7 +23,7 @@
         <h1>
             <center>INVENTARIO DE ALARMAS</center>
         </h1>
-        @include('inAlarma.create')
+        @include('inAlarma.create',[$id])
         <div class="table-responsive">
             </br>
             <table class="table table-striped" id="datosCctv">
@@ -37,7 +37,7 @@
                 </thead>
                 <tbody>
                     @foreach($inAlarmas as $inAlarma)
-                    @if($informes -> id == $inAlarma->informe_id)
+                    @if($id == $inAlarma->informe_id)
                     <tr>
                         <td>{{ $inAlarma->id}}</td>
                         <td>{{ $inAlarma->nombreEquipo}}</td>
@@ -57,7 +57,7 @@
             </table>
         </div>
         </br>
-        <a href="{{ url('/hdds') }}" class="btn btn-success">Guardar Datos</a>
+        <a href="{{ url('/informes') }}" class="btn btn-success">Guardar Datos</a>
     </div>
 </div>
 @endsection

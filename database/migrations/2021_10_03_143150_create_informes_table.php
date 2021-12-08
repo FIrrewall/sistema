@@ -21,8 +21,8 @@ class CreateInformesTable extends Migration
             $table->string('cliente');
             $table->string('direccion');
             $table->timestamp('fecha');
-            $table->string('nombreAgencia');
-            $table->string('nombreAtm');
+            $table->string('nombreAgencia')->nullable();
+            $table->string('nombreAtm')->nullable();
             $table->string('modeloPanel');
             $table->integer('lineaTelefonica');
             $table->string('ipModulo');

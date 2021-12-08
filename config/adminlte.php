@@ -242,13 +242,13 @@ return [
             'url'         => '',
             'icon'        => 'fas fa-home',
         ],
-
-        [
+        [ 
             'text'        => 'Usuarios',
             'url'         => 'users',
             'icon'        => 'fas fa-users fa-fw',
+            'can'         => 'users_index'
         ],
-
+        
         ['header' => 'ADMINISTRADOR'],
         [
             'text' => 'Perfil Usuario',
@@ -260,12 +260,25 @@ return [
             'url'  => 'admin/settings',
             'icon' => 'fas fa-fw fa-lock',
         ],
+        [
+            'text' => 'Permisos',
+            'url'  => 'permissions',
+            'icon' => 'fas fa-fw fa-lock',
+            'can'  => 'permissions_index'
+        ],
+        [
+            'text' => 'Roles',
+            'url'  => 'roles',
+            'icon' => 'fas fa-fw fa-lock',
+            'can'  => 'roles_index'
+        ],
 
         ['header' => 'PROCESOS'],
         [
             'text' => 'Informes',
             'url'  => '#',
             'icon' => 'fas fa-book-open',
+            'can'         => 'informes_index',
             'submenu' => [
                 [
                     'text' => 'Lista de Informes',
@@ -289,6 +302,7 @@ return [
             'text' => 'Inventarios',
             'url'  => '#',
             'icon' => 'fas fa-clipboard-check',
+            'can'         => 'inventaris_index',
             'submenu' => [
                 [
                     'text' => 'Lista de Inventarios',
@@ -322,6 +336,7 @@ return [
             'text' => 'Descargos',
             'url'  => '#',
             'icon' => 'fas fa-eject',
+            'can'  => 'descargos_index',
             'submenu' => [
                 [
                     'text' => 'Lista Descargos',

@@ -15,13 +15,8 @@ class CreateCctvsTable extends Migration
     {
         Schema::create('cctvs', function (Blueprint $table) {
             $table->id();
-            $table->string('tipoGrabador');
-            $table->string('numeroSerie');
-            $table->integer('cantidadCanales');
-            $table->integer('cantidadCamaras');
-            $table->integer('canalesLibre');
-            $table->integer('cantidadHdd');
-            $table->timestamp('tiempoGrabacion');
+            $table->string('nombre');
+            $table->integer('telefono');
             $table->foreignId('informe_id')->references('id')->on('informes');
             $table->timestamps();
         });

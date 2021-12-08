@@ -2,9 +2,9 @@
     <div class="form-group col-md-4">
 
         <select id="informe_id" name="informe_id" class="form-control">
-            <option value="{{ $informes->id}}">{{ $informes->tipoInforme}}</option>
+            <option value="{{$id}}">{{$id}}</option>
         </select>
-        <!--<input type="number" class="form-control" name="informe_id" value="{{ $informes->id}}" id="informe_id">-->
+        
     </div>
 </div>
 <div class="form-group">

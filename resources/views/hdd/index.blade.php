@@ -26,7 +26,7 @@
         <h1>
             <center>LISTA DE DISCOS DUROS</center>
         </h1>
-        @include('hdd.create')
+        @include('hdd.create',['$id'])
         <div class="table-responsive">
             </br>
             <table class="table table-striped" id="datosHdd">
@@ -42,7 +42,7 @@
                 </thead>
                 <tbody>
                     @foreach($hdds as $hdd)
-                    @if($informes -> id == $hdd->informe_id)
+                    @if($id == $hdd->informe_id)
                     <tr>
                         <td>{{ $hdd->id}}</td>
                         <td>{{ $hdd->numeroSerie}}</td>
@@ -63,24 +63,12 @@
                 </tbody>
             </table>
             </br>
-
-
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Dropdown button
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ url('/inventarioCctvs') }}">Inventario de CCTV</a>
-                    <a class="dropdown-item" href="{{ url('/inventarioAlarmas') }}">Inventario de Alarmas</a>
-                    <a class="dropdown-item" href="{{ url('/zonificaciones') }}">Zonificacion</a>
-                    <a class="dropdown-item" href="{{ url('/usuariosAlarma') }}">Usuarios de Alarmas</a>
-                    <a class="dropdown-item" href="{{ url('/numeros') }}">Numeros registrados</a>
-                    <a class="dropdown-item" href="{{ url('/trabajosRealizados') }}">Trabajos Realizados</a>
-                    <a class="dropdown-item" href="#">Planos</a>
-                </div>
-            </div>
+            
+            <a href="{{ url('/informes') }}" class="btn btn-success">Guardar Datos</a>
+                
 
         </div>
+        
     </div>
 </div>
 

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Descargos;
 use App\Http\Controllers\Controller;
 use App\Models\Descargo;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 class DescargoController extends Controller
 {
     /**
@@ -15,7 +15,9 @@ class DescargoController extends Controller
      */
     public function index()
     {
-        return view('descargo.index');
+        abort_if(Gate::denies('descargos_index'),403);
+        $datos['descargos']=Descargo::all();
+        return view('descargo.index',$datos);
     }
 
     /**
@@ -24,8 +26,9 @@ class DescargoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-        //
+    {   
+        abort_if(Gate::denies('descargos_create'),403);
+        return view('descargo.create');
     }
 
     /**
@@ -36,7 +39,28 @@ class DescargoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $campos=[
+            'departamento'=>'required|string|max:1000',
+            'nombreSolicitante'=>'required|string|max:1000',
+            'cargo'=>'required|string|max:1000',
+            'nombreDestinatario'=>'required|string|max:1000',
+            'fecha'=>'required|date_format:Y-m-d',
+            'fechaDesde'=>'required|date_format:Y-m-d',
+            'fechaHasta'=>'required|date_format:Y-m-d'
+        ];
+        $mensaje =[
+            'required'=>':attribute es requerido'
+        ];
+        
+        $this->validate($request,$campos,$mensaje);     
+        
+        //$datosEmpleado = request()->all();
+        $datosDescargo = request()->except('_token');
+        //Empleado::insert($datosEmpleado);
+        
+        Descargo::insert($datosDescargo);
+        return redirect('descargos')->with('mensaje');
+        //return view('hdds/{$informes->id}')->with('mensaje');
     }
 
     /**
@@ -56,9 +80,11 @@ class DescargoController extends Controller
      * @param  \App\Models\Descargo  $descargo
      * @return \Illuminate\Http\Response
      */
-    public function edit(Descargo $descargo)
-    {
-        //
+    public function edit($id)
+    {   
+        abort_if(Gate::denies('descargos_edit'),403);
+        $descargo=Descargo::findOrFail($id);
+        return view('descargo.edit', compact('descargo'));
     }
 
     /**
@@ -68,9 +94,13 @@ class DescargoController extends Controller
      * @param  \App\Models\Descargo  $descargo
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Descargo $descargo)
+    public function update(Request $request,$id)
     {
-        //
+        $datosDescargo = request()->except(['_token','_method']);
+        
+        Descargo::where('id', '=' , $id)->update($datosDescargo);
+
+        return redirect('descargos')->with('mensaje','Inventario modificado');
     }
 
     /**
@@ -79,8 +109,11 @@ class DescargoController extends Controller
      * @param  \App\Models\Descargo  $descargo
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Descargo $descargo)
-    {
-        //
+    public function destroy($id)
+    {   
+        abort_if(Gate::denies('descargos_destroy'),403);
+        Descargo::destroy($id);
+        
+        return redirect('descargos')->with('mensaje','Inventario borrado');
     }
 }

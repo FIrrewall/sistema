@@ -8,9 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Inventari extends Model
 {
     use HasFactory;
-    /*
-    public function user()
+    
+    public function entradas()
     {
-        return $this->belongsTo('App\User');
-    }*/
+        return $this->hasMany('App\Entrada');
+    }
+    public function existentes()
+    {
+        return $this->hasMany('App\Existente');
+    }
+    public function salidas()
+    {
+        return $this->hasMany('App\Salida');
+    }
 }

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UsuariosAlarma;
 use App\Models\Informe;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 class UsuariosAlarmaController extends Controller
 {
     /**
@@ -14,14 +14,11 @@ class UsuariosAlarmaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        //$users = In::all();
-       $datos['usuarios']=UsuariosAlarma::all();
-       $informes = Informe::latest('id')->first();
-       //return $informes;
-       return view('usuarioAlarma.index',$datos,compact('informes'));
-       //,$informes
+        abort_if(Gate::denies('usuariosAlarma_index'),403);   
+        $datosUsuarios['usuarios'] = UsuariosAlarma::all();
+        return view('usuarioAlarma.index',$datosUsuarios,compact('id'));
     }
 
     /**
@@ -31,6 +28,7 @@ class UsuariosAlarmaController extends Controller
      */
     public function create()
     {
+        abort_if(Gate::denies('usuariosAlarma_create'),403);
         return view('usuarioAlarma.create');  
     }
 
@@ -58,8 +56,8 @@ class UsuariosAlarmaController extends Controller
         //Empleado::insert($datosEmpleado);
         
         UsuariosAlarma::insert($datosUsuario);
-        
-        return redirect('usuariosAlarma')->with('mensaje','Equipo agregado con exito');
+        $post = request()->input('informe_id');
+        return redirect('/alarmaUsuarios/'.$post)->with('mensaje','Equipo agregado con exito');
     }
 
     /**
@@ -81,6 +79,7 @@ class UsuariosAlarmaController extends Controller
      */
     public function edit($id)
     {
+        abort_if(Gate::denies('usuariosAlarma_edit'),403);
         $usuario=UsuariosAlarma::findOrFail($id);
         return view('usuarioAlarma.edit', compact('usuario'));
     }
@@ -96,7 +95,8 @@ class UsuariosAlarmaController extends Controller
     {
         $datosZona = request()->except(['_token','_method','informe_id']);
         UsuariosAlarma::where('id', '=' , $id)->update($datosZona);
-        return redirect('usuariosAlarma')->with('mensaje','Datos de Equipo Modificado');
+        $post = request()->input('informe_id');
+        return redirect('/alarmaUsuarios/'.$post)->with('mensaje','Equipo agregado con exito');
     }
 
     /**
@@ -107,7 +107,11 @@ class UsuariosAlarmaController extends Controller
      */
     public function destroy($id)
     {
-        UsuariosAlarma::destroy($id); 
-        return redirect('usuariosAlarma')->with('mensaje','Equipo Eliminado');
+        abort_if(Gate::denies('usuariosAlarma_destroy'),403);
+        $datosUsuarios = UsuariosAlarma::findOrFail($id);
+        $idIn = $datosUsuarios->informe_id;
+        UsuariosAlarma::destroy($id);
+        return redirect('/alarmaUsuarios/'.$idIn)->with('mensaje','Equipo Eliminado');
+
     }
 }

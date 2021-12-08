@@ -23,7 +23,7 @@
         <h1>
             <center>INVENTARIO CCTV</center>
         </h1>
-        @include('inCctv.create')
+        @include('inCctv.create',[$id])
         <div class="table-responsive">
             </br>
             <table class="table table-striped" id="datosCctv">
@@ -37,7 +37,7 @@
                 </thead>
                 <tbody>
                     @foreach($inCctvs as $inCctv)
-                    @if($informes -> id == $inCctv->informe_id)
+                    @if($id == $inCctv->informe_id)
                     <tr>
                         <td>{{ $inCctv->id}}</td>
                         <td>{{ $inCctv->nombreEquipo}}</td>
@@ -57,7 +57,7 @@
             </table>
         </div>
         </br>
-        <a href="{{ url('/hdds') }}" class="btn btn-success">Guardar Datos</a>
+        <a href="{{ url('/informes') }}" class="btn btn-success">Guardar Datos</a>
     </div>
 </div>
 @endsection

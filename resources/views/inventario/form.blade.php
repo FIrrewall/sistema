@@ -1,43 +1,14 @@
-</br>
-<div class="card">
-    <div class="card-body">
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">@</span>
-            </div>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-        </div>
+<div class="form-group">
+    <label for="exampleFormControlInput1">Nombre del Inventario</label>
+    <input type="text" class="form-control" name="descripcion" value="{{ isset($inventario->descripcion)? $inventario->descripcion:old('descripcion') }}" id="descripcion">
+</div>
+<div class="form-group">
+    <label for="fecha">Fecha</label>
+    <input type="date" class="form-control" name="fecha" value="{{ isset($inventario->fecha)? \Carbon\Carbon::parse($inventario->fecha)->format('Y-m-d'):old('fecha') }}" id="fecha">
+</div>
 
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
-            <div class="input-group-append">
-                <span class="input-group-text" id="basic-addon2">@example.com</span>
-            </div>
-        </div>
-
-        <label for="basic-url">Your vanity URL</label>
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon3">https://example.com/users/</span>
-            </div>
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
-        </div>
-
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text">$</span>
-            </div>
-            <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
-            <div class="input-group-append">
-                <span class="input-group-text">.00</span>
-            </div>
-        </div>
-
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text">With textarea</span>
-            </div>
-            <textarea class="form-control" aria-label="With textarea"></textarea>
-        </div>
-    </div>
+<div class="modal-footer">
+    @csrf
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    <button type="submit" class="btn btn-primary">{{ $modo}} datos</button>
 </div>

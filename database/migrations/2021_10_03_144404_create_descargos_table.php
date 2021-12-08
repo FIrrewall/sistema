@@ -20,8 +20,8 @@ class CreateDescargosTable extends Migration
             $table->string('nombreSolicitante');
             $table->string('cargo');
             $table->string('nombreDestinatario');
-            $table->timestamp('fecha');
-            $table->timestamp('fechaDesde');
+            $table->timestamp('fecha');//cambio de descargo
+            $table->timestamp('fechaDesde');//Cambio realizado
             $table->timestamp('fechaHasta');
             $table->timestamps();
         });

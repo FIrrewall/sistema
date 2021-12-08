@@ -8,7 +8,7 @@ use App\Models\Informe;
 use App\Models\InventarioCctv;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Gate;
 class HddController extends Controller
 {
     /**
@@ -16,8 +16,12 @@ class HddController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
+        abort_if(Gate::denies('hdds_index'),403);
+        $datosHdd['hdds'] = Hdd::all();
+        return view('hdd.index',$datosHdd,compact('id'));
+        /*
         //$users = In::all();
         $datos['hdds']=Hdd::all();
         //$datosInCctv['inCctvs']=InventarioCctv::all();
@@ -25,6 +29,7 @@ class HddController extends Controller
         //return $informes;
         return view('hdd.index',$datos,$informes);
         //$datos,$informes,$datosInCctv
+        */
     }
 
     /**
@@ -34,6 +39,7 @@ class HddController extends Controller
      */
     public function create()
     {
+        abort_if(Gate::denies('hdds_create'),403);
         //$informes = Informe::latest('id')->first();
         return view('hdd.create');
     }
@@ -64,7 +70,9 @@ class HddController extends Controller
         
         Hdd::insert($datosHdd);
         
-        return redirect('hdds')->with('mensaje','Empleado agregado con exito');
+        //return redirect('hdds')->with('mensaje','Empleado agregado con exito');
+        $post = request()->input('informe_id');
+        return redirect('/datosInforme/'.$post)->with('mensaje');
     }
 
     /**
@@ -86,6 +94,7 @@ class HddController extends Controller
      */
     public function edit($id)
     {
+        abort_if(Gate::denies('edit_index'),403);
         $hdd=Hdd::findOrFail($id);
 
         return view('hdd.edit', compact('hdd'));
@@ -104,8 +113,8 @@ class HddController extends Controller
         
         
         Hdd::where('id', '=' , $id)->update($datosEmpleado);
-
-        return redirect('hdds')->with('mensaje','Informe modificado');
+        $post = request()->input('informe_id');
+        return redirect('/datosInforme/'.$post)->with('mensaje','Disco duro modificado');
     }
 
     /**
@@ -116,10 +125,10 @@ class HddController extends Controller
      */
     public function destroy($id)
     {
+        abort_if(Gate::denies('hdds_destroy'),403);
         $hdd = Hdd::findOrFail($id);
-        
+        $idIn = $hdd->informe_id;
         Hdd::destroy($id);
-        
-        return redirect('hdds')->with('mensaje','Empleado borrado');
+        return redirect('/datosInforme/'.$idIn)->with('mensaje','Disco duro borrado');
     }
 }

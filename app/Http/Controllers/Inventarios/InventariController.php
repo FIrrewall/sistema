@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inventarios;
 use App\Http\Controllers\Controller;
 use App\Models\Inventari;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class InventariController extends Controller
 {
@@ -15,7 +16,9 @@ class InventariController extends Controller
      */
     public function index()
     {
-        return view('inventario.index');
+        abort_if(Gate::denies('inventaris_index'),403);
+        $datos['inventarios']=Inventari::all();
+        return view('inventario.index',$datos);
     }
 
     /**
@@ -25,6 +28,7 @@ class InventariController extends Controller
      */
     public function create()
     {
+        abort_if(Gate::denies('inventaris_create'),403);
         return view('inventario.create');
     }
 
@@ -36,7 +40,23 @@ class InventariController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $campos=[
+            'descripcion'=>'required|string|max:1000',
+            'fecha'=>'required|date_format:Y-m-d'
+        ];
+        $mensaje =[
+            'required'=>':attribute es requerido'
+        ];
+        
+        $this->validate($request,$campos,$mensaje);     
+        
+        //$datosEmpleado = request()->all();
+        $datosInventario = request()->except('_token');
+        //Empleado::insert($datosEmpleado);
+        
+        Inventari::insert($datosInventario);
+        return redirect('inventarios')->with('mensaje');
+        //return view('hdds/{$informes->id}')->with('mensaje');
     }
 
     /**
@@ -56,9 +76,13 @@ class InventariController extends Controller
      * @param  \App\Models\Inventari  $inventari
      * @return \Illuminate\Http\Response
      */
-    public function edit(Inventari $inventari)
+    public function edit($id)
     {
-        //
+        abort_if(Gate::denies('inventaris_edit'),403);
+
+        $inventario=Inventari::findOrFail($id);
+
+        return view('inventario.edit', compact('inventario'));
     }
 
     /**
@@ -68,9 +92,14 @@ class InventariController extends Controller
      * @param  \App\Models\Inventari  $inventari
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Inventari $inventari)
+    public function update(Request $request, $id)
     {
-        //
+        $datosInventario = request()->except(['_token','_method']);
+        
+        
+        Inventari::where('id', '=' , $id)->update($datosInventario);
+
+        return redirect('inventarios')->with('mensaje','Resumen modificado');
     }
 
     /**
@@ -79,8 +108,12 @@ class InventariController extends Controller
      * @param  \App\Models\Inventari  $inventari
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Inventari $inventari)
+    public function destroy($id)
     {
-        //
+        abort_if(Gate::denies('inventaris_destroy'),403);
+
+        Inventari::destroy($id);
+        
+        return redirect('inventarios')->with('mensaje','Inventario borrado');
     }
 }

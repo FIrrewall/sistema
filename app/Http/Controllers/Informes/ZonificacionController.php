@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Zonificacion;
 use App\Models\Informe;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 class ZonificacionController extends Controller
 {
     /**
@@ -14,14 +14,12 @@ class ZonificacionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-       //$users = In::all();
-       $datos['zonas']=Zonificacion::all();
-       $informes = Informe::latest('id')->first();
-       //return $informes;
-       return view('zonificacion.index',$datos,compact('informes'));
-       //,$informes
+        abort_if(Gate::denies('zonificaciones_index'),403);
+        $datosZona['zonas'] = Zonificacion::all();
+        return view('zonificacion.index',$datosZona,compact('id'));
+       
     }
 
     /**
@@ -31,6 +29,7 @@ class ZonificacionController extends Controller
      */
     public function create()
     {
+        abort_if(Gate::denies('zonificaciones_create'),403);
         return view('zonificacion.create');  
     }
 
@@ -62,8 +61,8 @@ class ZonificacionController extends Controller
         //Empleado::insert($datosEmpleado);
         
         Zonificacion::insert($datosZona);
-        
-        return redirect('zonificaciones')->with('mensaje','Equipo agregado con exito');
+        $post = request()->input('informe_id');
+        return redirect('/zonas/'.$post)->with('mensaje','Equipo agregado con exito');
     }
 
     /**
@@ -84,7 +83,7 @@ class ZonificacionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
+    {   abort_if(Gate::denies('zonificaciones_edit'),403);
         $zona=Zonificacion::findOrFail($id);
         return view('zonificacion.edit', compact('zona'));
     }
@@ -100,7 +99,8 @@ class ZonificacionController extends Controller
     {
         $datosZona = request()->except(['_token','_method','informe_id']);
         Zonificacion::where('id', '=' , $id)->update($datosZona);
-        return redirect('zonificaciones')->with('mensaje','Datos de Equipo Modificado');
+        $post = request()->input('informe_id');
+        return redirect('/zonas/'.$post)->with('mensaje','Equipo agregado con exito');
     }
 
     /**
@@ -110,8 +110,10 @@ class ZonificacionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
-        Zonificacion::destroy($id); 
-        return redirect('zonificaciones')->with('mensaje','Equipo Eliminado');
+    {   abort_if(Gate::denies('zonificaciones_destroy'),403);
+        $datosZona = Zonificacion::findOrFail($id);
+        $idIn = $datosZona->informe_id;
+        Zonificacion::destroy($id);
+        return redirect('/zonas/'.$idIn)->with('mensaje','Equipo Eliminado');
     }
 }

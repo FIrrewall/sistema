@@ -20,25 +20,49 @@
             </button>
         </div>
         @endif
-
-        <a href="{{ url('inventarios/create') }}" class="btn btn-success">Nuevo empleado</a>
+        <h1>
+            <center>LISTA DE INVENTARIOS</center>
+        </h1>
+        <!--<a href="{{ url('inventarios/create') }}" class="btn btn-info">Nuevo Inventario</a>-->
+        @can('inventaris_create')
+        @include('inventario.create')
+        @endcan
         <br />
         <br />
-        <table class="table table-dark table-striped" id="empleado">
+        <table class="table table-striped" id="empleado">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Foto</th>
-                    <th>Nombre</th>
-                    <th>Apellido Paterno</th>
-                    <th>Apellido Materno</th>
-                    <th>Correo</th>
+                    <th>ID</th>
+                    <th>Nombre de Inventario</th>
+                    <th>Fecha</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
 
             <tbody>
-                
+                @foreach($inventarios as $inventario)
+                <tr>
+                    <td>{{ $inventario->id}}</td>
+                    <td>{{ $inventario->descripcion}}</td>
+                    <td>{{ \Carbon\Carbon::parse($inventario->fecha)->format('d-m-Y')}}</td>
+                    <td>
+                        @can('inventaris_edit')
+                        @include('inventario.edit', compact($inventario -> id))
+                        @endcan
+                        @can('inventaris_destroy')
+                        <form action="{{ url('/inventarios/'.$inventario->id) }}" class="d-inline" method="post">
+                            @csrf
+                            {{method_field('DELETE')}}
+                            <input class="btn btn-danger" type="submit" onclick="return confirm('¿Quieres borrar?')" value="Borrar">
+                        </form>
+                        @endcan
+                        <a href="{{ url('/existenteInventario/'.$inventario->id) }}" class="btn btn-success">
+                            Ver
+                        </a>
+
+                    </td>
+                </tr>
+                @endforeach
             </tbody>
 
         </table>

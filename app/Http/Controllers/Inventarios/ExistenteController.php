@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Inventarios;
 
 use App\Http\Controllers\Controller;
 use App\Models\Existente;
+use App\Models\Inventari;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Gate;
 
 class ExistenteController extends Controller
 {
@@ -13,9 +16,12 @@ class ExistenteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    public function index($id)
     {
-        return view('existente.index');
+        abort_if(Gate::denies('existentes_index'),403);
+        $datosExistentes['existentes'] = Existente::all();
+        return view('existente.index',$datosExistentes,compact('id'));
     }
 
     /**
@@ -25,7 +31,8 @@ class ExistenteController extends Controller
      */
     public function create()
     {
-        //
+        abort_if(Gate::denies('existentes_create'),403);
+        return view('existente.create');
     }
 
     /**
@@ -36,7 +43,25 @@ class ExistenteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $campos=[
+            'codigoProducto'=>'required|string|max:1000',
+            'descripcion'=>'required|string|max:1000',
+            'existenciaInicial'=>'required|integer|max:1000'
+        ];
+        $mensaje =[
+            'required'=>':attribute es requerido'
+        ];
+        
+        $this->validate($request,$campos,$mensaje);     
+        
+        
+        $datosExistente = request()->except('_token');
+
+        $id = request()->except(['_token','_method','codigoProducto','descripcion','existenciaInicial','id']);
+        Existente::insert($datosExistente);
+        $post = request()->input('inventari_id');
+        return redirect('/existenteInventario/'.$post)->with('mensaje');
+        
     }
 
     /**
@@ -56,9 +81,12 @@ class ExistenteController extends Controller
      * @param  \App\Models\Existente  $existente
      * @return \Illuminate\Http\Response
      */
-    public function edit(Existente $existente)
+    public function edit($id)
     {
-        //
+        abort_if(Gate::denies('existentes_edit'),403);
+        $existente=Existente::findOrFail($id);
+
+        return view('existente.edit', compact('existente'));
     }
 
     /**
@@ -68,9 +96,14 @@ class ExistenteController extends Controller
      * @param  \App\Models\Existente  $existente
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Existente $existente)
+    public function update(Request $request,$id)
     {
-        //
+        $datosExistente = request()->except(['_token','_method']);
+        $post = request()->input('inventari_id');
+        
+        Existente::where('id', '=' , $id)->update($datosExistente);
+        return redirect('/existenteInventario/'.$post)->with('mensaje','Inventario modificado');
+        //return redirect('existentes')->with('mensaje','Inventario modificado');
     }
 
     /**
@@ -79,8 +112,12 @@ class ExistenteController extends Controller
      * @param  \App\Models\Existente  $existente
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Existente $existente)
+    public function destroy($id)
     {
-        //
+        abort_if(Gate::denies('existentes_destroy'),403);
+        $existente = Existente::findOrFail($id);
+        $idIn = $existente->inventari_id;
+        Existente::destroy($id);
+        return redirect('/existenteInventario/'.$idIn)->with('mensaje','Inventario borrado');
     }
 }

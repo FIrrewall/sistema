@@ -6,14 +6,14 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Editar datos del Registro</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Editar datos del Equipo</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
 
-                <form action="{{ url('/numeros/'.$contacto->id)}}" method="post" entype="multipart/form-data">
+                <form action="{{ url('/numeros/'.$contacto->id)}}" method="post">
                     @csrf
                     {{method_field('PATCH')}}
                     @include('numero.form', ['modo'=>'Crear'])

@@ -23,7 +23,7 @@
         <h1>
             <center>USUARIOS DE ALARMA</center>
         </h1>
-        @include('usuarioAlarma.create')
+        @include('usuarioAlarma.create',[$id])
         <div class="table-responsive">
             </br>
             <table class="table table-striped" id="datosUsuarios">
@@ -38,7 +38,7 @@
                 </thead>
                 <tbody>
                     @foreach($usuarios as $usuario)
-                    @if($informes -> id == $usuario->informe_id)
+                    @if($id == $usuario->informe_id)
                     <tr>
                         <td>{{ $usuario->id}}</td>
                         <td>{{ $usuario->numeroUsuario}}</td>
@@ -59,7 +59,7 @@
             </table>
         </div>
         </br>
-        <a href="{{ url('/hdds') }}" class="btn btn-success">Guardar Datos</a>
+        <a href="{{ url('/informes') }}" class="btn btn-success">Guardar Datos</a>
     </div>
 </div>
 @endsection

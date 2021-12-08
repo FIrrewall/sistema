@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Informes;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cctv;
+use App\Models\Informe;
 use Illuminate\Http\Request;
 
 class CctvController extends Controller
@@ -15,7 +16,12 @@ class CctvController extends Controller
      */
     public function index()
     {
-        //
+        //$users = In::all();
+        $datos['contactos']=Cctv::all();
+        $informes = Informe::latest('id')->first();
+        //return $informes;
+        return view('numero.index',$datos,compact('informes'));
+        //,$informes
     }
 
     /**
@@ -25,7 +31,7 @@ class CctvController extends Controller
      */
     public function create()
     {
-        //
+        return view('numero.create');
     }
 
     /**
@@ -36,7 +42,19 @@ class CctvController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $campos=[
+            'nombre'=>'required|string|max:1000',
+            'telefono'=>'required|integer|max:100000000'
+        ];
+        $mensaje =[
+            'required'=>'El :attribute es requerido'
+        ];
+        
+        $this->validate($request,$campos,$mensaje);     
+        $datosNumero = request()->except('_token'); 
+        Cctv::insert($datosNumero);
+        //return $request->all();
+        return redirect('registros')->with('mensaje','Datos guardados correctamente');
     }
 
     /**
@@ -56,9 +74,10 @@ class CctvController extends Controller
      * @param  \App\Models\Cctv  $cctv
      * @return \Illuminate\Http\Response
      */
-    public function edit(Cctv $cctv)
+    public function edit($id)
     {
-        //
+        $contacto  = Cctv::findOrFail($id);
+        return view('numero.edit', compact('contacto'));
     }
 
     /**
@@ -68,9 +87,11 @@ class CctvController extends Controller
      * @param  \App\Models\Cctv  $cctv
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Cctv $cctv)
+    public function update(Request $request,$id)
     {
-        //
+        $datosNumero = request()->except(['_token','_method','informe_id']);
+        Cctv::where('id', '=' , $id)->update($datosNumero);
+        return redirect('registros')->with('mensaje','Datos de Equipo Modificado');
     }
 
     /**
@@ -79,8 +100,10 @@ class CctvController extends Controller
      * @param  \App\Models\Cctv  $cctv
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Cctv $cctv)
+    public function destroy($id)
     {
-        //
+        $inCctv = Cctv::findOrFail($id);
+        Cctv::destroy($id); 
+        return redirect('registros')->with('mensaje','Equipo Eliminado');
     }
 }

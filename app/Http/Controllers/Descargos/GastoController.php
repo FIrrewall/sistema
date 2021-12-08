@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Descargos;
 use App\Http\Controllers\Controller;
 use App\Models\Gasto;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 class GastoController extends Controller
 {
     /**
@@ -13,9 +13,11 @@ class GastoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        return view('gasto.index');
+        abort_if(Gate::denies('gastos_index'),403);
+        $datosGasto['gastos'] = Gasto::all();
+        return view('gasto.index',$datosGasto,compact('id'));
     }
 
     /**
@@ -25,7 +27,8 @@ class GastoController extends Controller
      */
     public function create()
     {
-        //
+        abort_if(Gate::denies('gastos_create'),403);
+        return view('gasto.create'); 
     }
 
     /**
@@ -36,7 +39,29 @@ class GastoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $campos=[
+            'fecha'=>'required|date_format:Y-m-d',
+            'detalle'=>'required|string|max:100',
+            'codigo'=>'required|string|max:100',
+            'proveedor'=>'required|string|max:100',
+            'cliente'=>'required|string|max:100',
+            'proyecto'=>'required|string|max:100',
+            'tipoComprobante'=>'required|string|max:100',
+            'numeroComprobante'=>'required|integer|max:1000000',
+            'monto'=>'required|numeric|regex:/^[\d]{0,11}(\.[\d]{1,2})?$/'
+        ];
+        $mensaje =[
+            'required'=>'El :attribute es requerido'
+        ];
+        
+        $this->validate($request,$campos,$mensaje);     
+        
+        //$datosEmpleado = request()->all();
+        $datosCaja = request()->except('_token');
+        //Empleado::insert($datosEmpleado);
+        Gasto::insert($datosCaja);
+        $post = request()->input('descargo_id');
+        return redirect('/registroGastos/'.$post)->with('mensaje','Equipo agregado con exito');
     }
 
     /**
@@ -56,9 +81,11 @@ class GastoController extends Controller
      * @param  \App\Models\Gasto  $gasto
      * @return \Illuminate\Http\Response
      */
-    public function edit(Gasto $gasto)
+    public function edit($id)
     {
-        //
+        abort_if(Gate::denies('gastos_edit'),403);
+        $gasto = Gasto::findOrFail($id);
+        return view('gasto.edit', compact('gasto'));
     }
 
     /**
@@ -68,9 +95,12 @@ class GastoController extends Controller
      * @param  \App\Models\Gasto  $gasto
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Gasto $gasto)
+    public function update(Request $request, $id)
     {
-        //
+        $datosGasto = request()->except(['_token','_method','descargo_id']);
+        Gasto::where('id', '=' , $id)->update($datosGasto);
+        $post = request()->input('descargo_id');
+        return redirect('/registroGastos/'.$post)->with('mensaje','Equipo agregado con exito');
     }
 
     /**
@@ -79,8 +109,12 @@ class GastoController extends Controller
      * @param  \App\Models\Gasto  $gasto
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Gasto $gasto)
+    public function destroy($id)
     {
-        //
+        abort_if(Gate::denies('gastos_destroy'),403);
+        $registroGasto = Gasto::findOrFail($id);
+        $idIn = $registroGasto->descargo_id;
+        Gasto::destroy($id);
+        return redirect('/registroGastos/'.$idIn)->with('mensaje','Equipo Eliminado');
     }
 }

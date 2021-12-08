@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Spatie\Permission\Models\Role;
+
 
 class UserController extends Controller
 {
@@ -20,7 +22,9 @@ class UserController extends Controller
 
     public function index()
     {
-        return view('livewire.admin.users-index');
+        $datosUser['users']=User::all();
+        return view('users.index',$datosUser);
+        //return view('livewire.admin.users-index');
     }
 
 
@@ -62,11 +66,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(User $user)
     {
-        $iduser=User::findOrFail($id);
-
-        return view('livewire.admin.user-edit', compact('iduser'));
+        $roles = Role::all();
+        return view('users.edit', compact('user','roles'));
         
     }
 
@@ -77,9 +80,14 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $user->roles()->sync($request->roles);
+        //$datosUsuarios = User::all();
+        $id = $user->id;
+        return $id;
+        //return redirect()->route('users.edit',$user)->with('info','Se asigno los roles correctamente');
+        //return redirect('/users/'.$id.'edit')->with('mensaje');
     }
 
     /**

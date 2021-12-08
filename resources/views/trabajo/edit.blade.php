@@ -13,7 +13,7 @@
             </div>
             <div class="modal-body">
 
-                <form action="{{ url('/trabajosRealizados/'.$trabajo->id)}}" method="post" entype="multipart/form-data">
+                <form action="{{ url('/trabajosRealizados/'.$trabajo->id)}}" method="post" enctype="multipart/form-data">
                     @csrf
                     {{method_field('PATCH')}}
                     @include('trabajo.form', ['modo'=>'Crear'])

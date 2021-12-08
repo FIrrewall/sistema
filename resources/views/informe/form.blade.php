@@ -31,12 +31,6 @@
         
     });
 </script>
-
-
-
-
-<div class="card">
-    <div class="card-body">
         <h1>
             <center>INFORME</center>
         </h1>
@@ -130,12 +124,10 @@
                 <option value="1">Resuelto</option>
             </select>
         </div>
-
-
-
-        </br>
-
-        <button type="submit" class="btn btn-primary btn-lg btn-block" value=" {{ $modo }} datos">SIGUIENTE</button>
+        </br>   
+        <a class="btn btn-primary" href="/informes" role="button">Volver</a>
+        <button class="btn btn-primary" type="submit">{{ $modo}}</button>
+        <!--<button type="submit" class="btn btn-primary btn-lg btn-block" value="">{{ $modo}}</button>-->
 
         <!-- BLOQUE SISTEMA CCTV -->
     </div>

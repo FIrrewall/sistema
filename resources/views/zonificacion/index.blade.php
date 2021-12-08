@@ -23,7 +23,7 @@
         <h1>
             <center>ZONIFICACION</center>
         </h1>
-        @include('zonificacion.create')
+        @include('zonificacion.create',[$id])
         <div class="table-responsive">
             </br>
             <table class="table table-striped" id="datosZona">
@@ -39,7 +39,7 @@
                 </thead>
                 <tbody>
                     @foreach($zonas as $zona)
-                    @if($informes -> id == $zona->informe_id)
+                    @if($id == $zona->informe_id)
                     <tr>
                         <td>{{ $zona->id}}</td>
                         <td>{{ $zona->numeroZona}}</td>
@@ -61,7 +61,7 @@
             </table>
         </div>
         </br>
-        <a href="{{ url('/hdds') }}" class="btn btn-success">Guardar Datos</a>
+        <a href="{{ url('/informes') }}" class="btn btn-success">Guardar Datos</a>
     </div>
 </div>
 @endsection

@@ -23,7 +23,7 @@
         <h1>
             <center>TRABAJOS REALIZADOS</center>
         </h1>
-        @include('trabajo.create')
+        @include('trabajo.create',[$id])
         <div class="table-responsive">
             </br>
             <table class="table table-striped" id="datosCctv">
@@ -37,7 +37,7 @@
                 </thead>
                 <tbody>
                     @foreach($trabajos as $trabajo)
-                    @if($informes -> id == $trabajo->informe_id)
+                    @if($id == $trabajo->informe_id)
                     <tr>
                         <td>{{ $trabajo->id}}</td>
                         <td>{{ $trabajo->descripcion}}</td>
@@ -46,7 +46,7 @@
                         </td>
                         <td>
                             @include('trabajo.edit', compact($trabajo -> id))
-                            <form action="{{ url('/inventarioCctvs/'.$trabajo->id) }}" class="d-inline" method="post">
+                            <form action="{{ url('/trabajosRealizados/'.$trabajo->id)}}" class="d-inline" method="post">
                                 @csrf
                                 {{method_field('DELETE')}}
                                 <input class="btn btn-danger" type="submit" onclick="return confirm('¿Quieres borrar?')" value="Borrar">
@@ -59,7 +59,7 @@
             </table>
         </div>
         </br>
-        <a href="{{ url('/hdds') }}" class="btn btn-success">Guardar Datos</a>
+        <a href="{{ url('/informes') }}" class="btn btn-success">Guardar Datos</a>
     </div>
 </div>
 @endsection

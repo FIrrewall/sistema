@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Informes;
 use App\Http\Controllers\Controller;
 use App\Models\Simbolo;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 class SimboloController extends Controller
 {
     /**

@@ -23,21 +23,21 @@
         <h1>
             <center>REGISTRO DE NUMEROS</center>
         </h1>
-        @include('numero.create')
+        @include('numero.create',[$id])
         <div class="table-responsive">
             </br>
-            <table class="table table-striped" id="datosNumero">
+            <table class="table table-striped" id="datosRegistros">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Cel. o Telf.</th>
+                        <th>Telefono</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($contactos as $contacto)
-                    @if($informes -> id == $contacto->informe_id)
+                    @if($id == $contacto->informe_id)
                     <tr>
                         <td>{{ $contacto->id}}</td>
                         <td>{{ $contacto->nombre}}</td>
@@ -57,7 +57,7 @@
             </table>
         </div>
         </br>
-        <a href="{{ url('/hdds') }}" class="btn btn-success">Guardar Datos</a>
+        <a href="{{ url('/informes') }}" class="btn btn-success">Guardar Datos</a>
     </div>
 </div>
 @endsection
@@ -69,7 +69,7 @@
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
 <script>
-    $('#datosNumero').DataTable({
+    $('#datosRegistros').DataTable({
         responsive: true,
         autoWidth: false,
         "language": {

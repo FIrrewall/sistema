@@ -1,3 +1,4 @@
+
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#nuevosRegistros">
     Nuevo equipo
 </button>
@@ -12,7 +13,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ url('/numeros') }}" method="post" entype="multipart/form-data">
+                <form action="{{ url('/numeros') }}" method="post">
                     @csrf
                     @include('numero.form', ['modo'=>'Crear'])
                 </form>

@@ -1,10 +1,10 @@
 <div class="form-row">
 
     <div class="form-group col-md-4">
-        <!--<input type="number" class="form-control" name="informe_id" value="{{ $informes->id}}" id="informe_id">-->
+        
 
         <select id="informe_id" name="informe_id" class="form-control">
-            <option value="{{ $informes->id}}">{{ $informes->tipoInforme}}</option>
+            <option value="{{$id}}">{{$id}}</option>
         </select>
     </div>
 </div>

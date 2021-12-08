@@ -12,11 +12,12 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ url('/trabajosRealizados') }}" method="post" entype="multipart/form-data">
+                <form action="{{ url('/trabajosRealizados') }}" method="post" enctype="multipart/form-data">
                     @csrf
-                    @include('trabajo.form', ['modo'=>'Crear'])
+                    @include('trabajo.form', ['modo'=>'Nuevo'])
+                    
                 </form>
-            </div>                                                                                      
+            </div>
         </div>
     </div>
 </div>

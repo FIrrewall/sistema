@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\InventarioAlarma;
 use App\Models\Informe;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 class InventarioAlarmaController extends Controller
 {
     /**
@@ -14,14 +14,19 @@ class InventarioAlarmaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
+        abort_if(Gate::denies('inventarioAlarmas_index'),403);
+        $datosAlarma['inAlarmas'] = InventarioAlarma::all();
+        return view('inAlarma.index',$datosAlarma,compact('id'));
+        /*
         //$users = In::all();
         $datos['inAlarmas']=InventarioAlarma::all();
         $informes = Informe::latest('id')->first();
         //return $informes;
         return view('inAlarma.index',$datos,compact('informes'));
         //,$informes
+        */
     }
 
     /**
@@ -31,6 +36,7 @@ class InventarioAlarmaController extends Controller
      */
     public function create()
     {
+        abort_if(Gate::denies('inventarioAlarmas_create'),403);
         return view('inAlarma.create');    
     }
 
@@ -57,8 +63,8 @@ class InventarioAlarmaController extends Controller
         //Empleado::insert($datosEmpleado);
         
         InventarioAlarma::insert($datosAlarma);
-        
-        return redirect('inventarioAlarmas')->with('mensaje','Equipo agregado con exito');
+        $post = request()->input('informe_id');
+        return redirect('/alarmaInventario/'.$post)->with('mensaje','Equipo agregado con exito');
     }
 
     /**
@@ -79,7 +85,8 @@ class InventarioAlarmaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
+    { 
+        abort_if(Gate::denies('inventarioAlarmas_edit'),403);
         $inAlarma=InventarioAlarma::findOrFail($id);
         return view('inAlarma.edit', compact('inAlarma'));
     }
@@ -95,7 +102,8 @@ class InventarioAlarmaController extends Controller
     {
         $datosAlarma = request()->except(['_token','_method','informe_id']);
         InventarioAlarma::where('id', '=' , $id)->update($datosAlarma);
-        return redirect('inventarioAlarmas')->with('mensaje','Datos de Equipo Modificado');
+        $post = request()->input('informe_id');
+        return redirect('/alarmaInventario/'.$post)->with('mensaje','Equipo agregado con exito');
     }
 
     /**
@@ -107,7 +115,10 @@ class InventarioAlarmaController extends Controller
     public function destroy($id)
     {
         //$inCctv = InventarioAlarma::findOrFail($id);
-        InventarioAlarma::destroy($id); 
-        return redirect('inventarioAlarmas')->with('mensaje','Equipo Eliminado');
+        abort_if(Gate::denies('inventarioAlarmas_destroy'),403);
+        $alarma = InventarioAlarma::findOrFail($id);
+        $idIn = $alarma->informe_id;
+        InventarioAlarma::destroy($id);
+        return redirect('/alarmaInventario/'.$idIn)->with('mensaje','Equipo Eliminado');
     }
 }

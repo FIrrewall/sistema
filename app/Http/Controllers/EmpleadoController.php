@@ -138,4 +138,12 @@ class EmpleadoController extends Controller
 
         return redirect('empleado')->with('mensaje', 'Empleado borrado');
     }
+
+        //$datosEmpleado = request()->all();
+        //Empleado::insert($datosEmpleado);
+        //settype($id, "integer");
+        //return $post;
+        //return Route::get('/inventarioAñadir/{id}', [ExistenteController::class, 'index'])->with('mensaje');
+        //return redirect()->route('inventarioAñadir',[ 'id' => 'inventari_id']);
+        //return view(existentes',compact('id'))->with('mensaje'); redirect('inventarioAñadir/{{$id}}');
 }

@@ -18,3 +18,5 @@
 @section('js')
     <script>console.log('hola')</script>
 @stop
+
+{{ __('A fresh verification link has been sent to your email address.') }}

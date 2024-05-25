@@ -19,7 +19,21 @@ class TrabajosRealizadoController extends Controller
     {
         abort_if(Gate::denies('trabajosRealizados_index'),403);
         $datosTrabajo['trabajos'] = TrabajosRealizado::all();
-        return view('trabajo.index',$datosTrabajo,compact('id'));
+        $informe = Informe::all();
+        foreach($informe as $info)
+        {
+            if($id == $info->id)
+            {
+                if($info->nombreAgencia == "")
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAtm;
+                }else
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAgencia;
+                }
+            }
+        }
+        return view('trabajo.index',$datosTrabajo,compact('id','resul'));
     }
 
     /**
@@ -42,8 +56,8 @@ class TrabajosRealizadoController extends Controller
     public function store(Request $request)
     {
         $campos=[
-            'descripcion'=>'required|string|max:100',
-            'imagen' => 'required|image|max:2048'
+            'descripcion'=>'required|string',
+            
         ];
         $mensaje =[
             'required'=>'El :attribute es requerido'
@@ -62,7 +76,7 @@ class TrabajosRealizadoController extends Controller
         TrabajosRealizado::insert($datosTrabajo);
         //return $datosTrabajo['imagen'];
         $post = request()->input('informe_id');
-        return redirect('/trabajos/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/trabajos/'.$post)->with('nuevo','ok');
     }
 //return redirect('numeros')->with('mensaje','Equipo agregado con exito');
     /**
@@ -112,7 +126,7 @@ class TrabajosRealizadoController extends Controller
         
         TrabajosRealizado::where('id', '=' , $id)->update($datosTrabajo);
         $post = request()->input('informe_id');
-        return redirect('/trabajos/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/trabajos/'.$post)->with('actualizar','ok');
         
     }
 
@@ -129,7 +143,7 @@ class TrabajosRealizadoController extends Controller
         $datosTrabajo = TrabajosRealizado::findOrFail($id);
         $idIn = $datosTrabajo->informe_id;
         TrabajosRealizado::destroy($id);
-        return redirect('/trabajos/'.$idIn)->with('mensaje','Equipo Eliminado');
+        return redirect('/trabajos/'.$idIn)->with('eliminar','ok');
 
     }
 }

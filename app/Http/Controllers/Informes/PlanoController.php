@@ -19,7 +19,21 @@ class PlanoController extends Controller
     {
         abort_if(Gate::denies('planos_index'),403);
         $datosUsuarios['planos'] = Plano::all();
-        return view('plano.index',$datosUsuarios,compact('id'));
+        $informe = Informe::all();
+        foreach($informe as $info)
+        {
+            if($id == $info->id)
+            {
+                if($info->nombreAgencia == "")
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAtm;
+                }else
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAgencia;
+                }
+            }
+        }
+        return view('plano.index',$datosUsuarios,compact('id','resul'));
     }
 
     /**
@@ -27,10 +41,24 @@ class PlanoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id)
     {
         abort_if(Gate::denies('planos_create'),403);
-        return view('plano.create');
+        $informe = Informe::all();
+        foreach($informe as $info)
+        {
+            if($id == $info->id)
+            {
+                if($info->nombreAgencia == "")
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAtm;
+                }else
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAgencia;
+                }
+            }
+        }
+        return view('plano.create', compact('id','resul'));
     }
 
     /**
@@ -42,8 +70,8 @@ class PlanoController extends Controller
     public function store(Request $request)
     {
         $campos=[
-            'nombre'=>'required|string|max:100',
-            'planta' => 'required|image|max:2048'
+            'nombre'=>'required|string|max:1000000',
+            'tipoPlano'=>'required|string|max:1000000'
         ];
         $mensaje =[
             'required'=>'El :attribute es requerido'
@@ -61,7 +89,7 @@ class PlanoController extends Controller
         }   
         Plano::insert($datosPlano);
         $post = request()->input('informe_id');
-        return redirect('/planosAgencias/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/planosAgencias/'.$post)->with('nuevo','ok');
     }
 
     /**
@@ -85,7 +113,21 @@ class PlanoController extends Controller
     {
         abort_if(Gate::denies('planos_edit'),403);
         $plano = Plano::findOrFail($id);
-        return view('plano.edit', compact('plano'));
+        $informe = Informe::all();
+        foreach($informe as $info)
+        {
+            if($plano->informe_id == $info->id)
+            {
+                if($info->nombreAgencia == "")
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAtm;
+                }else
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAgencia;
+                }
+            }
+        }
+        return view('plano.edit', compact('plano','resul'));
     }
 
     /**
@@ -111,7 +153,7 @@ class PlanoController extends Controller
         
         Plano::where('id', '=' , $id)->update($datosPlano);
         $post = request()->input('informe_id');
-        return redirect('/planosAgencias/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/planosAgencias/'.$post)->with('actualizar','ok');
     }
 
     /**
@@ -126,6 +168,6 @@ class PlanoController extends Controller
         $datosTrabajo = Plano::findOrFail($id);
         $idIn = $datosTrabajo->informe_id;
         Plano::destroy($id);
-        return redirect('/planosAgencias/'.$idIn)->with('mensaje','Equipo Eliminado');
+        return redirect('/planosAgencias/'.$idIn)->with('eliminar','ok');
     }
 }

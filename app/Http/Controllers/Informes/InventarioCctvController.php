@@ -18,7 +18,21 @@ class InventarioCctvController extends Controller
     {
         abort_if(Gate::denies('inventarioCctv_index'),403);
         $datosCctv['inCctvs'] = InventarioCctv::all();
-        return view('inCctv.index',$datosCctv,compact('id'));
+        $informe = Informe::all();
+        foreach($informe as $info)
+        {
+            if($id == $info->id)
+            {
+                if($info->nombreAgencia == "")
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAtm;
+                }else
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAgencia;
+                }
+            }
+        }
+        return view('inCctv.index',$datosCctv,compact('id','resul'));
 
         /*
         //$users = In::all();
@@ -63,7 +77,7 @@ class InventarioCctvController extends Controller
         InventarioCctv::insert($datosCctv);
         //return $request->all();
         $post = request()->input('informe_id');
-        return redirect('/cctvInventario/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/cctvInventario/'.$post)->with('nuevo','ok');
     }
 
     /**
@@ -102,7 +116,7 @@ class InventarioCctvController extends Controller
         $datosInCctv = request()->except(['_token','_method','informe_id']);
         InventarioCctv::where('id', '=' , $id)->update($datosInCctv);
         $post = request()->input('informe_id');
-        return redirect('/cctvInventario/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/cctvInventario/'.$post)->with('actualizar','ok');
     }
 
     /**
@@ -117,6 +131,6 @@ class InventarioCctvController extends Controller
         $entrada = InventarioCctv::findOrFail($id);
         $idIn = $entrada->informe_id;
         InventarioCctv::destroy($id);
-        return redirect('/cctvInventario/'.$idIn)->with('mensaje','Equipo Eliminado');
+        return redirect('/cctvInventario/'.$idIn)->with('eliminar','ok');
     }
 }

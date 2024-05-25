@@ -18,7 +18,21 @@ class NumeroController extends Controller
     {
         abort_if(Gate::denies('numeros_index'),403);
         $datosNumero['contactos'] = Numero::all();
-        return view('numero.index',$datosNumero,compact('id'));
+        $informe = Informe::all();
+        foreach($informe as $info)
+        {
+            if($id == $info->id)
+            {
+                if($info->nombreAgencia == "")
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAtm;
+                }else
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAgencia;
+                }
+            }
+        }
+        return view('numero.index',$datosNumero,compact('id','resul'));
     }
 
     /**
@@ -52,7 +66,7 @@ class NumeroController extends Controller
         $datosNumero= request()->except('_token'); 
         Numero::insert($datosNumero);
         $post = request()->input('informe_id');
-        return redirect('/registroNumero/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/registroNumero/'.$post)->with('nuevo','ok');
     }
 
     /**
@@ -91,7 +105,7 @@ class NumeroController extends Controller
         $datosNumero = request()->except(['_token','_method','informe_id']);
         Numero::where('id', '=' , $id)->update($datosNumero);
         $post = request()->input('informe_id');
-        return redirect('/registroNumero/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/registroNumero/'.$post)->with('actualizar','ok');
     }
 
     /**
@@ -106,6 +120,6 @@ class NumeroController extends Controller
         $datosZona = Numero::findOrFail($id);
         $idIn = $datosZona->informe_id;
         Numero::destroy($id);
-        return redirect('/registroNumero/'.$idIn)->with('mensaje','Equipo Eliminado');
+        return redirect('/registroNumero/'.$idIn)->with('eliminar','ok');
     }
 }

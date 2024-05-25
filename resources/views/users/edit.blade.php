@@ -16,12 +16,20 @@
             </ul>
         </div>
         @endif
-        <div class="card">
+        <div class="card card-info">
+            <div class="card-header">
+                <table width=100%>
+                    <tr>
+                        <td align="left" width=5%>
+                            <h2><i class="fas fa-user"></i></h2>
+                        </td>
+                        <td align="center">
+                            <h2>ACTUALIZAR USUARIO</h2>
+                        </td>
+                    </tr>
+                </table>
+            </div>
             <div class="card-body">
-                <h1>
-                    <center>Lista de Usuarios</center>
-                </h1>
-                </br>
                 <div class="form-group">
                     <label for="formGroupExampleInput">Nombre Completo</label>
                     <input type="text" class="form-control" id="formGroupExampleInput" name="name" value="{{ isset($user->name)? $user->name:old('name') }}" required>
@@ -31,13 +39,6 @@
                     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email" value="{{ isset($user->email)? $user->email:old('email') }}" required>
                     <small id="emailHelp" class="form-text text-muted">El correo debe contener @, numeros y caracteres</small>
                 </div>
-                <!--<div class="form-group">
-    <label for="exampleInputPassword1">Password</label>
-    <input type="password" class="form-control" id="exampleInputPassword1" name="password" required>
-    @if($errors->has('password'))
-    <span class="error texr-danger" for="input-password">{{$errors->first('password')}}</span>
-    @endif
-</div>-->
 
                 <div class="form-group">
                     <table class="table table-striped">
@@ -57,8 +58,11 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="modal-footer justify-content-between">
+                    <a href="{{ url('/users') }}" class="btn btn-primary"><i class="fas fa-undo-alt"></i> Atras</a>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Actualizar</button>
+                </div>
 
-                <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </form>

@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Descargos;
 
 use App\Http\Controllers\Controller;
 use App\Models\CajaChica;
+use App\Models\Descargo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
+use PDF;
+
 class CajaChicaController extends Controller
 {
     /**
@@ -20,16 +24,41 @@ class CajaChicaController extends Controller
         return view('cajaChica.index',$datosCaja,compact('id'));
 
     }
+    public function pdf($id)
+    {
+        abort_if(Gate::denies('cajaChica_pdf'),403);
+        $cajasChica = CajaChica::all();
+        $descargos = Descargo::all();
+        
+        $total = DB::select('SELECT ROUND(SUM(monto), 2) AS total
+        FROM caja_chicas AS CJ
+        WHERE (CJ.descargo_id = '.$id.')');
+        $pdf = PDF::loadView('cajaChica.pdf', ['cajasChica' => $cajasChica, 'resId' => $id, 'descargos' => $descargos,'total' => $total]);
+        $pdf->setPaper('carta', 'landscape');
+        //$pdf->render();
+        //return $pruebas;
+        return $pdf->stream();
+        //return view('informe.pdf',compact('informes'));
+    }
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id)
     {
         abort_if(Gate::denies('cajaChica_create'),403);
-        return view('cajaChica.create'); 
+        $codigo = CajaChica::latest('id')->first();
+        if($codigo != null)
+        {
+            $codigoCaja = $codigo->id + 1;    
+        }else
+        {
+            $codigoCaja = 1;  
+        }
+        
+        return view('cajaChica.create',compact('id','codigoCaja')); 
     }
 
     /**
@@ -59,7 +88,7 @@ class CajaChicaController extends Controller
         //Empleado::insert($datosEmpleado);
         CajaChica::insert($datosCaja);
         $post = request()->input('descargo_id');
-        return redirect('/cajaChica/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/cajaChica/'.$post)->with('nuevo','ok');
     }
 
     /**
@@ -83,7 +112,7 @@ class CajaChicaController extends Controller
     {
         abort_if(Gate::denies('cajaChica_edit'),403);
         $caja=CajaChica::findOrFail($id);
-        return view('inAlarma.edit', compact('caja'));
+        return view('cajaChica.edit', compact('caja'));
     }
 
     /**
@@ -95,10 +124,10 @@ class CajaChicaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $datosAlarma = request()->except(['_token','_method','informe_id']);
+        $datosAlarma = request()->except(['_token','_method']);
         CajaChica::where('id', '=' , $id)->update($datosAlarma);
         $post = request()->input('descargo_id');
-        return redirect('/cajaChica/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/cajaChica/'.$post)->with('actualizar','ok');
     }
 
     /**
@@ -113,6 +142,6 @@ class CajaChicaController extends Controller
         $caja = CajaChica::findOrFail($id);
         $idIn = $caja->descargo_id;
         CajaChica::destroy($id);
-        return redirect('/cajaChica/'.$idIn)->with('mensaje','Equipo Eliminado');
+        return redirect('/cajaChica/'.$idIn)->with('eliminar','ok');
     }
 }

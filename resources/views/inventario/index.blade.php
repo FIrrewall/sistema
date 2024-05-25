@@ -9,8 +9,20 @@
 @section('title','Inventarios')
 
 @section('content')
-<br />
-<div class="card">
+<div class="card card-primary">
+    <div class="card-header">
+        <table width=100%>
+            <tr>
+                <td align="left" width=5%>
+                    <h2><i class="fas fa-clipboard-list"></i></h2>
+                </td>
+                <td align="center">
+                    <h2>LISTA DE INVENTARIOS</h2>
+                </td>
+            </tr>
+        </table>
+    </div>
+
     <div class="card-body">
         @if(Session::has('mensaje'))
         <div class="alert alert-success alert-dismissible" role="alert">
@@ -20,9 +32,7 @@
             </button>
         </div>
         @endif
-        <h1>
-            <center>LISTA DE INVENTARIOS</center>
-        </h1>
+
         <!--<a href="{{ url('inventarios/create') }}" class="btn btn-info">Nuevo Inventario</a>-->
         @can('inventaris_create')
         @include('inventario.create')
@@ -30,7 +40,7 @@
         <br />
         <br />
         <table class="table table-striped" id="empleado">
-            <thead>
+            <thead class="table-dark">
                 <tr>
                     <th>ID</th>
                     <th>Nombre de Inventario</th>
@@ -50,14 +60,16 @@
                         @include('inventario.edit', compact($inventario -> id))
                         @endcan
                         @can('inventaris_destroy')
-                        <form action="{{ url('/inventarios/'.$inventario->id) }}" class="d-inline" method="post">
+                        <form action="{{ url('/inventarios/'.$inventario->id) }}" class="d-inline formulario-eliminar" method="post">
                             @csrf
                             {{method_field('DELETE')}}
-                            <input class="btn btn-danger" type="submit" onclick="return confirm('¿Quieres borrar?')" value="Borrar">
+                            <button class="btn btn-danger" type="submit">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </form>
                         @endcan
                         <a href="{{ url('/existenteInventario/'.$inventario->id) }}" class="btn btn-success">
-                            Ver
+                            <i class="fas fa-eye"></i>
                         </a>
 
                     </td>
@@ -78,10 +90,70 @@
 <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+
+@include('sweetalert::alert')
+
+@if (session('eliminar') == 'ok')
+<script>
+    Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'Eliminado con éxito.',
+        showConfirmButton: false,
+        timer: 1000
+    })
+</script>
+@endif
+
+@if (session('nuevo') == 'ok')
+<script>
+    Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'Guardado con éxito.',
+        showConfirmButton: false,
+        timer: 1000
+    })
+</script>
+@endif
+
+@if (session('actualizar') == 'ok')
+<script>
+    Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'Actualizado',
+        showConfirmButton: false,
+        timer: 1000
+    })
+</script>
+@endif
+
+<script>
+    $('.formulario-eliminar').submit(function(e) {
+        e.preventDefault();
+        Swal.fire({
+            title: '¿Estas seguro?',
+            text: "Este registro se eliminara definitivamente!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, eliminar!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit();
+            }
+        })
+    });
+</script>
+
 <script>
     $('#empleado').DataTable({
         responsive: true,
         autoWidth: false,
+        "order": [[0,'desc']],
         "language": {
             "lengthMenu": "Mostrar " +
                 `<select class="custom-selec custom-select-sm form-control form-control-sm">

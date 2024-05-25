@@ -16,7 +16,7 @@ return [
 
     'title' => '',
     'title_prefix' => '',
-    'title_postfix' => '| ITC',
+    'title_postfix' => '| ALOJAMIENTO',
 
     /*
     |--------------------------------------------------------------------------
@@ -45,12 +45,12 @@ return [
     |
     */
 
-    'logo' => '<b>SIPITC</b>',
-    'logo_img' => 'vendor/adminlte/dist/img/inicio.png',
+    'logo' => 'SIAL',
+    'logo_img' => 'vendor/adminlte/dist/img/login3.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'ITCSI',
+    'logo_img_alt' => 'SIAL',
 
     /*
     |--------------------------------------------------------------------------
@@ -69,7 +69,7 @@ return [
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => true,
     'usermenu_desc' => true,
-    'usermenu_profile_url' => true,
+    'usermenu_profile_url' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -102,12 +102,12 @@ return [
     |
     */
 
-    'classes_auth_card' => 'bg-gradient-dark',
-    'classes_auth_header' => '',
-    'classes_auth_body' => 'bg-gradient-dark',
-    'classes_auth_footer' => 'text-center',
-    'classes_auth_icon' => 'text-light',
-    'classes_auth_btn' => 'btn-flat btn-light',
+    'classes_auth_card' => '',
+    'classes_auth_header' => 'bg-gradient-info',
+    'classes_auth_body' => '',
+    'classes_auth_footer' => 'd-none',
+    'classes_auth_icon' => 'fa-lg text-info',
+    'classes_auth_btn' => 'btn-flat btn-primary',
 
     /*
     |--------------------------------------------------------------------------
@@ -231,174 +231,112 @@ return [
             'text'         => 'search',
             'topnav_right' => true,
         ],
-        
-        [
-            'text' => 'blog',
-            'url'  => 'admin/blog',
-            'can'  => 'manage-blog',
-        ],
         [
             'text'        => 'Inicio',
             'url'         => '',
             'icon'        => 'fas fa-home',
         ],
-        [ 
-            'text'        => 'Usuarios',
-            'url'         => 'users',
-            'icon'        => 'fas fa-users fa-fw',
-            'can'         => 'users_index'
-        ],
-        
-        ['header' => 'ADMINISTRADOR'],
-        [
+        /*[
             'text' => 'Perfil Usuario',
             'url'  => 'admin/settings',
             'icon' => 'fas fa-fw fa-user',
         ],
         [
             'text' => 'Cambiar Contraseña',
-            'url'  => 'admin/settings',
+            'url'  => 'cambio',
             'icon' => 'fas fa-fw fa-lock',
+        ],*/
+
+        ['header' => 'CONTROL DEL SISTEMA'],
+
+        [
+            'text' => 'USUARIOS',
+            'url'  => 'users',
+            'icon' => 'fas fa-users fa-fw',
+            'can'  => 'users_index'
         ],
         [
-            'text' => 'Permisos',
+            'text' => 'PERMISOS',
             'url'  => 'permissions',
-            'icon' => 'fas fa-fw fa-lock',
+            'icon' => 'fas fa-user-shield',
             'can'  => 'permissions_index'
         ],
         [
-            'text' => 'Roles',
+            'text' => 'ROLES',
             'url'  => 'roles',
-            'icon' => 'fas fa-fw fa-lock',
+            'icon' => 'fas fa-user-tag',
             'can'  => 'roles_index'
         ],
 
-        ['header' => 'PROCESOS'],
+        ['header' => 'ADMINISTRACION'],
+
         [
-            'text' => 'Informes',
-            'url'  => '#',
-            'icon' => 'fas fa-book-open',
-            'can'         => 'informes_index',
+            'text'    => 'ORGANIZACION',
+            'icon'    => 'fas fa-paperclip',
             'submenu' => [
                 [
-                    'text' => 'Lista de Informes',
-                    'url'  => 'informes',
-                    'icon' => 'fas fa-clipboard-list',
+                    'text' => 'Alojamientos',
+                    'url'  => 'alojamiento',
+                    'icon' => 'fas fa-fw fa-city',
                 ],
                 [
-                    'text' => 'Crear Informe',
-                    'url'  => 'informes/create',
-                    'icon' => 'fas fa-clipboard',
+                    'text' => 'Encargados',
+                    'url'  => 'encargados',
+                    'icon' => 'fas fa-user-check',
                 ],
+                /*
                 [
-                    'text' => 'Trabajos Pendientes',
-                    'url'  => 'work',
-                    'icon' => 'fas fa-tasks',
-                ],
+                    'text' => 'Habitaciones',
+                    'url'  => 'habitaciones',
+                    'icon' => 'fas fa-door-open',
+                ],*/
             ],
         ],
 
         [
-            'text' => 'Inventarios',
-            'url'  => '#',
-            'icon' => 'fas fa-clipboard-check',
-            'can'         => 'inventaris_index',
+            'text'    => 'SERVICIOS',
+            'icon'    => 'fas fa-handshake',
             'submenu' => [
                 [
-                    'text' => 'Lista de Inventarios',
+                    'text' => 'Reservaciones',
+                    'url'  => 'reservacion',
+                    'icon' => 'fas fa-calendar-check',
+                ],
+                [
+                    'text' => 'Productos',
+                    'url'  => 'productos',
+                    'icon' => 'fas fa-pump-medical',
+                ],
+                /*
+                [
+                    'text' => 'Ventas',
+                    'url'  => 'venta',
+                    'icon' => 'fas fa-concierge-bell',
+                ],
+                [
+                    'text' => 'Compras',
+                    'url'  => 'compra',
+                    'icon' => 'fas fa-shopping-cart',
+                ],
+                [
+                    'text' => 'Inventario',
                     'url'  => 'inventarios',
-                    'icon' => 'fas fa-clipboard-list',
-                ],
-                [
-                    'text' => 'Existentes',
-                    'url'  => 'existentes',
-                    'icon' => 'fas fa-list-alt',
-                ],
-                [
-                    'text' => 'Entradas',
-                    'url'  => 'entradas',
-                    'icon' => 'fas fa-indent',
-                ],
-                [
-                    'text' => 'Salidas',
-                    'url'  => 'salidas',
-                    'icon' => 'fas fa-outdent',
-                ],
-                [
-                    'text' => 'PDF Salida',
-                    'url'  => '#',
-                    'icon' => 'fas fa-print',
-                ],
+                    'icon' => 'fas fa-dolly-flatbed',
+                ],*/
             ],
         ],
 
         [
-            'text' => 'Descargos',
-            'url'  => '#',
-            'icon' => 'fas fa-eject',
-            'can'  => 'descargos_index',
+            'text'    => 'CONTROL',
+            'icon'    => 'fas fa-paper-plane',
             'submenu' => [
                 [
-                    'text' => 'Lista Descargos',
-                    'url'  => 'descargos',
+                    'text' => 'Resumen',
+                    'url'  => 'resumen',
                     'icon' => 'fas fa-clipboard-list',
                 ],
-                [
-                    'text' => 'Caja Chica',
-                    'url'  => 'cajas',
-                    'icon' => 'fas fa-box-open',
-                ],
-                [
-                    'text' => 'Gastos',
-                    'url'  => 'gastos',
-                    'icon' => 'fas fa-eraser',
-                ],
-                [
-                    'text' => 'Pasajes',
-                    'url'  => 'pasajes',
-                    'icon' => 'fas fa-bus',
-                ],
-                [
-                    'text' => 'Viaticos',
-                    'url'  => 'viaticos',
-                    'icon' => 'fas fa-money-bill-alt',
-                ],
             ],
         ],
-
-        [
-            'text' => 'Control de Procesos',
-            'url'  => '#',
-            'icon' => 'fas fa-tasks',
-            'submenu' => [
-                [
-                    'text' => 'Gestion de Informes',
-                    'url'  => '#',
-                    'icon' => 'fas fa-book',
-                ],
-                [
-                    'text' => 'Resumen de Inventario',
-                    'url'  => '#',
-                    'icon' => 'fas fa-cube',
-                ],
-                [
-                    'text' => 'Descargos por Verificar',
-                    'url'  => '#',
-                    'icon' => 'fas fa-bell',
-                ],
-                [
-                    'text' => 'Trabajos Pendientes',
-                    'url'  => '#',
-                    'icon' => 'fas fa-hammer',
-                ],
-            ],
-        ],
-
-
-
-
-
-        
     ],
 
     /*
@@ -482,12 +420,12 @@ return [
             ],
         ],
         'Sweetalert2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
-                    'asset' => false,
-                    'location' => '//cdn.jsdelivr.net/npm/sweetalert2@8',
+                    'asset' => true,
+                    'location' => 'vendor/sweetalert2/sweetalert2.all.min.js',
                 ],
             ],
         ],

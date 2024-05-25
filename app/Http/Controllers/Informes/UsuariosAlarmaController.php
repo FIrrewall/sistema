@@ -18,7 +18,21 @@ class UsuariosAlarmaController extends Controller
     {
         abort_if(Gate::denies('usuariosAlarma_index'),403);   
         $datosUsuarios['usuarios'] = UsuariosAlarma::all();
-        return view('usuarioAlarma.index',$datosUsuarios,compact('id'));
+        $informe = Informe::all();
+        foreach($informe as $info)
+        {
+            if($id == $info->id)
+            {
+                if($info->nombreAgencia == "")
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAtm;
+                }else
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAgencia;
+                }
+            }
+        }
+        return view('usuarioAlarma.index',$datosUsuarios,compact('id','resul'));
     }
 
     /**
@@ -26,10 +40,20 @@ class UsuariosAlarmaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id)
     {
         abort_if(Gate::denies('usuariosAlarma_create'),403);
-        return view('usuarioAlarma.create');  
+        $informe = Informe::all();
+        foreach ($informe as $info) {
+            if ($id == $info->id) {
+                if ($info->nombreAgencia == "") {
+                    $resul = $info->tipoInforme . " " . $info->nombreAtm;
+                } else {
+                    $resul = $info->tipoInforme . " " . $info->nombreAgencia;
+                }
+            }
+        }
+        return view('usuarioAlarma.create', compact('id','resul'));  
     }
 
     /**
@@ -57,7 +81,7 @@ class UsuariosAlarmaController extends Controller
         
         UsuariosAlarma::insert($datosUsuario);
         $post = request()->input('informe_id');
-        return redirect('/alarmaUsuarios/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/alarmaUsuarios/'.$post)->with('nuevo','ok');
     }
 
     /**
@@ -81,7 +105,17 @@ class UsuariosAlarmaController extends Controller
     {
         abort_if(Gate::denies('usuariosAlarma_edit'),403);
         $usuario=UsuariosAlarma::findOrFail($id);
-        return view('usuarioAlarma.edit', compact('usuario'));
+        $informe = Informe::all();
+        foreach ($informe as $info) {
+            if ($usuario->informe_id == $info->id) {
+                if ($info->nombreAgencia == "") {
+                    $resul = $info->tipoInforme . " " . $info->nombreAtm;
+                } else {
+                    $resul = $info->tipoInforme . " " . $info->nombreAgencia;
+                }
+            }
+        }
+        return view('usuarioAlarma.edit', compact('usuario','resul'));
     }
 
     /**
@@ -96,7 +130,7 @@ class UsuariosAlarmaController extends Controller
         $datosZona = request()->except(['_token','_method','informe_id']);
         UsuariosAlarma::where('id', '=' , $id)->update($datosZona);
         $post = request()->input('informe_id');
-        return redirect('/alarmaUsuarios/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/alarmaUsuarios/'.$post)->with('actualizar','ok');
     }
 
     /**
@@ -111,7 +145,7 @@ class UsuariosAlarmaController extends Controller
         $datosUsuarios = UsuariosAlarma::findOrFail($id);
         $idIn = $datosUsuarios->informe_id;
         UsuariosAlarma::destroy($id);
-        return redirect('/alarmaUsuarios/'.$idIn)->with('mensaje','Equipo Eliminado');
+        return redirect('/alarmaUsuarios/'.$idIn)->with('eliminar','ok');
 
     }
 }

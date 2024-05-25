@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Descargos;
 
 use App\Http\Controllers\Controller;
 use App\Models\Gasto;
+use App\Models\Descargo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
+use PDF;
+
 class GastoController extends Controller
 {
     /**
@@ -20,15 +24,40 @@ class GastoController extends Controller
         return view('gasto.index',$datosGasto,compact('id'));
     }
 
+    public function pdf($id)
+    {
+        abort_if(Gate::denies('gastos_pdf'),403);
+        $gastos = Gasto::all();
+        $descargos = Descargo::all();
+        
+        $total = DB::select('SELECT SUM(monto) AS total
+        FROM gastos AS GA
+        WHERE GA.descargo_id = '.$id.'');
+        $pdf = PDF::loadView('gasto.pdf', ['gastos' => $gastos, 'resId' => $id, 'descargos' => $descargos,'total' => $total]);
+        $pdf->setPaper('carta', 'landscape');
+        //$pdf->render();
+        //return $pruebas;
+        return $pdf->stream();
+        //return view('informe.pdf',compact('informes'));
+    }
+
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id)
     {
         abort_if(Gate::denies('gastos_create'),403);
-        return view('gasto.create'); 
+        $codigo = Gasto::latest('id')->first();
+        if($codigo != null)
+        {
+            $codigoGasto = $codigo->id + 1;    
+        }else
+        {
+            $codigoGasto = 1;  
+        }
+        return view('gasto.create',compact('id','codigoGasto')); 
     }
 
     /**
@@ -61,7 +90,7 @@ class GastoController extends Controller
         //Empleado::insert($datosEmpleado);
         Gasto::insert($datosCaja);
         $post = request()->input('descargo_id');
-        return redirect('/registroGastos/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/registroGastos/'.$post)->with('nuevo','ok');
     }
 
     /**
@@ -100,7 +129,7 @@ class GastoController extends Controller
         $datosGasto = request()->except(['_token','_method','descargo_id']);
         Gasto::where('id', '=' , $id)->update($datosGasto);
         $post = request()->input('descargo_id');
-        return redirect('/registroGastos/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/registroGastos/'.$post)->with('actualizar','ok');
     }
 
     /**
@@ -115,6 +144,6 @@ class GastoController extends Controller
         $registroGasto = Gasto::findOrFail($id);
         $idIn = $registroGasto->descargo_id;
         Gasto::destroy($id);
-        return redirect('/registroGastos/'.$idIn)->with('mensaje','Equipo Eliminado');
+        return redirect('/registroGastos/'.$idIn)->with('eliminar','ok');
     }
 }

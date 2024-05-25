@@ -18,7 +18,21 @@ class InventarioAlarmaController extends Controller
     {
         abort_if(Gate::denies('inventarioAlarmas_index'),403);
         $datosAlarma['inAlarmas'] = InventarioAlarma::all();
-        return view('inAlarma.index',$datosAlarma,compact('id'));
+        $informe = Informe::all();
+        foreach($informe as $info)
+        {
+            if($id == $info->id)
+            {
+                if($info->nombreAgencia == "")
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAtm;
+                }else
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAgencia;
+                }
+            }
+        }
+        return view('inAlarma.index',$datosAlarma,compact('id','resul'));
         /*
         //$users = In::all();
         $datos['inAlarmas']=InventarioAlarma::all();
@@ -64,7 +78,7 @@ class InventarioAlarmaController extends Controller
         
         InventarioAlarma::insert($datosAlarma);
         $post = request()->input('informe_id');
-        return redirect('/alarmaInventario/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/alarmaInventario/'.$post)->with('nuevo','ok');
     }
 
     /**
@@ -103,7 +117,7 @@ class InventarioAlarmaController extends Controller
         $datosAlarma = request()->except(['_token','_method','informe_id']);
         InventarioAlarma::where('id', '=' , $id)->update($datosAlarma);
         $post = request()->input('informe_id');
-        return redirect('/alarmaInventario/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/alarmaInventario/'.$post)->with('actualizar','ok');
     }
 
     /**
@@ -119,6 +133,6 @@ class InventarioAlarmaController extends Controller
         $alarma = InventarioAlarma::findOrFail($id);
         $idIn = $alarma->informe_id;
         InventarioAlarma::destroy($id);
-        return redirect('/alarmaInventario/'.$idIn)->with('mensaje','Equipo Eliminado');
+        return redirect('/alarmaInventario/'.$idIn)->with('eliminar','ok');
     }
 }

@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Informes;
 use App\Http\Controllers\Controller;
 use App\Models\Simbolo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
+use RealRashid\SweetAlert\Facades\Alert;
+//use Alert;
 class SimboloController extends Controller
 {
     /**
@@ -15,7 +18,12 @@ class SimboloController extends Controller
      */
     public function index()
     {
-        //
+        abort_if(Gate::denies('simbolos_index'),403);
+        $simbolo['simbolos'] = Simbolo::all();
+        //Alert::toast('Producto registrado','success');
+        //Alert::success('Success Title', 'Success Message');
+        
+        return view('simbolo.index',$simbolo);
     }
 
     /**
@@ -25,7 +33,8 @@ class SimboloController extends Controller
      */
     public function create()
     {
-        //
+        abort_if(Gate::denies('simbolos_create'),403);
+        return view('simbolo.create');
     }
 
     /**
@@ -36,7 +45,30 @@ class SimboloController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $campos=[
+            'nombreSimbolo'=>'required|string|max:100',
+            'simbolo' => 'required|image|max:2048'
+        ];
+        $mensaje =[
+            'required'=>'El :attribute es requerido'
+        ];
+        $this->validate($request,$campos,$mensaje);      
+        //$datosEmpleado = request()->all();
+        $datosSimbolo = request()->except('_token');
+        //Empleado::insert($datosEmpleado); 
+        if($request-> hasFile('simbolo')){
+            
+            $file = $request->file('simbolo');
+            $nombre = date("Y-m-d",time())."_".$file->getClientOriginalName();
+            //$datosTrabajo['imagen']=$request->file('imagen')->store('uploads','public');
+            $datosSimbolo['simbolo']=$file->storeAs('simbolos',$nombre,'public');
+        }   
+        Simbolo::insert($datosSimbolo);
+        
+        //alert()->success('Title','Lorem Lorem Lorem');
+        return redirect('/simbolos')->with('nuevo','ok');
+        //with('mensaje','Simbolo agregado con exito');
+        //'/simbolos'->route('simbolos')
     }
 
     /**
@@ -56,9 +88,11 @@ class SimboloController extends Controller
      * @param  \App\Models\Simbolo  $simbolo
      * @return \Illuminate\Http\Response
      */
-    public function edit(Simbolo $simbolo)
+    public function edit($id)
     {
-        //
+        abort_if(Gate::denies('simbolos_edit'),403);
+        $simbolo = Simbolo::findOrFail($id);
+        return view('simbolo.edit', compact('simbolo'));
     }
 
     /**
@@ -68,9 +102,23 @@ class SimboloController extends Controller
      * @param  \App\Models\Simbolo  $simbolo
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Simbolo $simbolo)
+    public function update(Request $request, $id)
     {
-        //
+        $simbolo = Simbolo::findOrFail($id);
+        $datosSimbolo = request()->except(['_token','_method','informe_id']);
+        
+        if($request-> hasFile('simbolo')){
+            Storage::delete('public/'.$simbolo->simbolo);
+            $file = $request->file('simbolo');
+            $nombreImagen = date("Y-m-d",time())."_".$file->getClientOriginalName();
+            //$datosTrabajo['imagen']=$request->file('imagen')->store('uploads','public');
+            $datosSimbolo['simbolo']=$file->storeAs('simbolos',$nombreImagen,'public');
+            //$datosTrabajo['imagen'] = $request->file('imagen')->store('trabajos','public');
+        }
+        
+        Simbolo::where('id', '=' , $id)->update($datosSimbolo);
+        return redirect('/simbolos')->with('actualizar','ok');
+        //->withSuccessMessage('Se actualizo correctamente')
     }
 
     /**
@@ -79,8 +127,11 @@ class SimboloController extends Controller
      * @param  \App\Models\Simbolo  $simbolo
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Simbolo $simbolo)
+    public function destroy($id)
     {
-        //
+        abort_if(Gate::denies('simbolos_destroy'),403);
+        //$datosTrabajo = Simbolo::findOrFail($id);
+        Simbolo::destroy($id);
+        return redirect('/simbolos')->with('eliminar','ok');
     }
 }

@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Descargos;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pasaje;
+use App\Models\Descargo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
+use PDF;
 class PasajeController extends Controller
 {
     /**
@@ -20,15 +23,40 @@ class PasajeController extends Controller
         return view('pasaje.index',$datosPasaje,compact('id'));
     }
 
+    public function pdf($id)
+    {
+        abort_if(Gate::denies('pasajes_pdf'),403);
+        $pasajes = Pasaje::all();
+        $descargos = Descargo::all();
+        
+        $total = DB::select('SELECT ROUND(SUM(monto), 2) AS total
+        FROM pasajes AS PA
+        WHERE PA.descargo_id = '.$id.'');
+        $pdf = PDF::loadView('pasaje.pdf', ['pasajes' => $pasajes, 'resId' => $id, 'descargos' => $descargos,'total' => $total]);
+        $pdf->setPaper('carta', 'landscape');
+        //$pdf->render();
+        //return $pruebas;
+        return $pdf->stream();
+        //return view('informe.pdf',compact('informes'));
+    }
+
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id)
     {
         abort_if(Gate::denies('pasajes_create'),403);
-        return view('pasaje.create'); 
+        $codigo = Pasaje::latest('id')->first();
+        if($codigo != null)
+        {
+            $codigoPasaje = $codigo->id + 1;    
+        }else
+        {
+            $codigoPasaje = 1;  
+        }
+        return view('pasaje.create',compact('id','codigoPasaje')); 
     }
 
     /**
@@ -61,7 +89,7 @@ class PasajeController extends Controller
         //Empleado::insert($datosEmpleado);
         Pasaje::insert($datosCaja);
         $post = request()->input('descargo_id');
-        return redirect('/registroPasajes/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/registroPasajes/'.$post)->with('nuevo','ok');
     }
 
     /**
@@ -100,7 +128,7 @@ class PasajeController extends Controller
         $datosAlarma = request()->except(['_token','_method','informe_id']);
         Pasaje::where('id', '=' , $id)->update($datosAlarma);
         $post = request()->input('descargo_id');
-        return redirect('/registroPasajes/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/registroPasajes/'.$post)->with('actualizar','ok');
     }
 
     /**
@@ -115,6 +143,6 @@ class PasajeController extends Controller
         $caja = Pasaje::findOrFail($id);
         $idIn = $caja->descargo_id;
         Pasaje::destroy($id);
-        return redirect('/registroPasajes/'.$idIn)->with('mensaje','Equipo Eliminado');
+        return redirect('/registroPasajes/'.$idIn)->with('eliminar','ok');
     }
 }

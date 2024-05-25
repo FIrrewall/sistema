@@ -20,7 +20,22 @@ class HddController extends Controller
     {
         abort_if(Gate::denies('hdds_index'),403);
         $datosHdd['hdds'] = Hdd::all();
-        return view('hdd.index',$datosHdd,compact('id'));
+        $informe = Informe::all();
+        foreach($informe as $info)
+        {
+            if($id == $info->id)
+            {
+                if($info->nombreAgencia == "")
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAtm;
+                }else
+                {
+                    $resul = $info->tipoInforme." ".$info->nombreAgencia;
+                }
+            }
+        }
+        $informe = Informe::all();
+        return view('hdd.index',$datosHdd,compact('id','resul'));
         /*
         //$users = In::all();
         $datos['hdds']=Hdd::all();
@@ -72,7 +87,7 @@ class HddController extends Controller
         
         //return redirect('hdds')->with('mensaje','Empleado agregado con exito');
         $post = request()->input('informe_id');
-        return redirect('/datosInforme/'.$post)->with('mensaje');
+        return redirect('/datosInforme/'.$post)->with('nuevo','ok');
     }
 
     /**
@@ -114,12 +129,12 @@ class HddController extends Controller
         
         Hdd::where('id', '=' , $id)->update($datosEmpleado);
         $post = request()->input('informe_id');
-        return redirect('/datosInforme/'.$post)->with('mensaje','Disco duro modificado');
+        return redirect('/datosInforme/'.$post)->with('actualizar','ok');
     }
 
     /**
      * Remove the specified resource from storage.
-     *
+     
      * @param  \App\Models\Hdd  $hdd
      * @return \Illuminate\Http\Response
      */
@@ -129,6 +144,6 @@ class HddController extends Controller
         $hdd = Hdd::findOrFail($id);
         $idIn = $hdd->informe_id;
         Hdd::destroy($id);
-        return redirect('/datosInforme/'.$idIn)->with('mensaje','Disco duro borrado');
+        return redirect('/datosInforme/'.$idIn)->with('eliminar','ok');
     }
 }

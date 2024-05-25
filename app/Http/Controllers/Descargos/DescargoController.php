@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Descargo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 class DescargoController extends Controller
 {
     /**
@@ -17,7 +18,14 @@ class DescargoController extends Controller
     {
         abort_if(Gate::denies('descargos_index'),403);
         $datos['descargos']=Descargo::all();
-        return view('descargo.index',$datos);
+        $usuario = auth()->user();
+        $user = $usuario->name;
+        $prueva = json_encode($user);
+        $llenadoPor = DB::select('SELECT *
+        FROM descargos
+        WHERE nombreSolicitante LIKE '.$prueva.'');
+
+        return view('descargo.index',$datos, compact('user'))->with(['llenadoPor' => $llenadoPor]);
     }
 
     /**
@@ -28,7 +36,9 @@ class DescargoController extends Controller
     public function create()
     {   
         abort_if(Gate::denies('descargos_create'),403);
-        return view('descargo.create');
+        $usuario = auth()->user();
+        $user = $usuario->name;
+        return view('descargo.create',compact('user'));
     }
 
     /**
@@ -42,6 +52,7 @@ class DescargoController extends Controller
         $campos=[
             'departamento'=>'required|string|max:1000',
             'nombreSolicitante'=>'required|string|max:1000',
+            'ci'=>'required|string|max:1000',
             'cargo'=>'required|string|max:1000',
             'nombreDestinatario'=>'required|string|max:1000',
             'fecha'=>'required|date_format:Y-m-d',
@@ -59,7 +70,7 @@ class DescargoController extends Controller
         //Empleado::insert($datosEmpleado);
         
         Descargo::insert($datosDescargo);
-        return redirect('descargos')->with('mensaje');
+        return redirect('descargos')->with('nuevo','ok');
         //return view('hdds/{$informes->id}')->with('mensaje');
     }
 
@@ -84,7 +95,9 @@ class DescargoController extends Controller
     {   
         abort_if(Gate::denies('descargos_edit'),403);
         $descargo=Descargo::findOrFail($id);
-        return view('descargo.edit', compact('descargo'));
+        $usuario = auth()->user();
+        $user = $usuario->name;
+        return view('descargo.edit', compact('descargo','user'));
     }
 
     /**
@@ -100,7 +113,7 @@ class DescargoController extends Controller
         
         Descargo::where('id', '=' , $id)->update($datosDescargo);
 
-        return redirect('descargos')->with('mensaje','Inventario modificado');
+        return redirect('descargos')->with('actualizar','ok');
     }
 
     /**
@@ -114,6 +127,6 @@ class DescargoController extends Controller
         abort_if(Gate::denies('descargos_destroy'),403);
         Descargo::destroy($id);
         
-        return redirect('descargos')->with('mensaje','Inventario borrado');
+        return redirect('descargos')->with('eliminar','ok');
     }
 }

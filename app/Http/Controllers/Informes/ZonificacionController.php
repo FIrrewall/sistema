@@ -7,6 +7,7 @@ use App\Models\Zonificacion;
 use App\Models\Informe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+
 class ZonificacionController extends Controller
 {
     /**
@@ -16,10 +17,19 @@ class ZonificacionController extends Controller
      */
     public function index($id)
     {
-        abort_if(Gate::denies('zonificaciones_index'),403);
+        abort_if(Gate::denies('zonificaciones_index'), 403);
         $datosZona['zonas'] = Zonificacion::all();
-        return view('zonificacion.index',$datosZona,compact('id'));
-       
+        $informe = Informe::all();
+        foreach ($informe as $info) {
+            if ($id == $info->id) {
+                if ($info->nombreAgencia == "") {
+                    $resul = $info->tipoInforme . " " . $info->nombreAtm;
+                } else {
+                    $resul = $info->tipoInforme . " " . $info->nombreAgencia;
+                }
+            }
+        }
+        return view('zonificacion.index', $datosZona, compact('id', 'resul'));
     }
 
     /**
@@ -27,10 +37,20 @@ class ZonificacionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id)
     {
-        abort_if(Gate::denies('zonificaciones_create'),403);
-        return view('zonificacion.create');  
+        abort_if(Gate::denies('zonificaciones_create'), 403);
+        $informe = Informe::all();
+        foreach ($informe as $info) {
+            if ($id == $info->id) {
+                if ($info->nombreAgencia == "") {
+                    $resul = $info->tipoInforme . " " . $info->nombreAtm;
+                } else {
+                    $resul = $info->tipoInforme . " " . $info->nombreAgencia;
+                }
+            }
+        }
+        return view('zonificacion.create', compact('id','resul'));
     }
 
     /**
@@ -41,28 +61,27 @@ class ZonificacionController extends Controller
      */
     public function store(Request $request)
     {
-        $campos=[
-            'nombreModulo'=>'required|string|max:100',
-            'numeroSerie'=>'required|string|max:100',
-            'numeroZona'=>'required|integer|max:100',
-            'numeroParticion'=>'required|integer|max:100',
-            'nombreParticion'=>'required|string|max:100',
-            'nombreSensor'=>'required|string|max:100',
-            'descripcion'=>'required|string'            
+        $campos = [
+            'nombreModulo' => 'required|string|max:100',
+            'numeroSerie' => 'required|string|max:100',
+            'numeroZona' => 'required|integer|max:100',
+            'numeroParticion' => 'required|integer|max:100',
+            'nombreParticion' => 'required|string|max:100',
+            'descripcion' => 'required|string'
         ];
-        $mensaje =[
-            'required'=>'El :attribute es requerido'
+        $mensaje = [
+            'required' => 'El :attribute es requerido'
         ];
-        
-        $this->validate($request,$campos,$mensaje);     
-        
+
+        $this->validate($request, $campos, $mensaje);
+
         //$datosEmpleado = request()->all();
         $datosZona = request()->except('_token');
         //Empleado::insert($datosEmpleado);
-        
+
         Zonificacion::insert($datosZona);
         $post = request()->input('informe_id');
-        return redirect('/zonas/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/zonas/' . $post)->with('nuevo', 'ok');
     }
 
     /**
@@ -83,9 +102,20 @@ class ZonificacionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {   abort_if(Gate::denies('zonificaciones_edit'),403);
-        $zona=Zonificacion::findOrFail($id);
-        return view('zonificacion.edit', compact('zona'));
+    {
+        abort_if(Gate::denies('zonificaciones_edit'), 403);
+        $zona = Zonificacion::findOrFail($id);
+        $informe = Informe::all();
+        foreach ($informe as $info) {
+            if ($zona->informe_id == $info->id) {
+                if ($info->nombreAgencia == "") {
+                    $resul = $info->tipoInforme . " " . $info->nombreAtm;
+                } else {
+                    $resul = $info->tipoInforme . " " . $info->nombreAgencia;
+                }
+            }
+        }
+        return view('zonificacion.edit', compact('zona','resul'));
     }
 
     /**
@@ -95,12 +125,12 @@ class ZonificacionController extends Controller
      * @param  \App\Models\Zonificacion  $zonificacion
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
-        $datosZona = request()->except(['_token','_method','informe_id']);
-        Zonificacion::where('id', '=' , $id)->update($datosZona);
+        $datosZona = request()->except(['_token', '_method', 'informe_id']);
+        Zonificacion::where('id', '=', $id)->update($datosZona);
         $post = request()->input('informe_id');
-        return redirect('/zonas/'.$post)->with('mensaje','Equipo agregado con exito');
+        return redirect('/zonas/' . $post)->with('actualizar', 'ok');
     }
 
     /**
@@ -110,10 +140,11 @@ class ZonificacionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {   abort_if(Gate::denies('zonificaciones_destroy'),403);
+    {
+        abort_if(Gate::denies('zonificaciones_destroy'), 403);
         $datosZona = Zonificacion::findOrFail($id);
         $idIn = $datosZona->informe_id;
         Zonificacion::destroy($id);
-        return redirect('/zonas/'.$idIn)->with('mensaje','Equipo Eliminado');
+        return redirect('/zonas/' . $idIn)->with('eliminar', 'ok');
     }
 }

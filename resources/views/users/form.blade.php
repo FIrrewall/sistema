@@ -1,5 +1,3 @@
-</br>
-
 @if(count($errors)>0)
 <div class="alert alert-danger" role="alert">
     <ul>
@@ -10,10 +8,6 @@
 </div>
 @endif
 
-<h1>
-    <center>Lista de Usuarios</center>
-</h1>
-</br>
 <div class="form-group">
     <label for="formGroupExampleInput">Nombre Completo</label>
     <input type="text" class="form-control" id="formGroupExampleInput" name="name" required>
@@ -34,6 +28,24 @@
 <div class="form-group">
     <table class="table table-striped">
         <tbody>
+            @can('users_indexJefe')
+            @foreach($roles as $id=>$role)
+            @if($role != 'AdminSistema')
+            <tr>
+                <td>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="roles[]" value="{{$id}}">
+                    </div>
+                </td>
+                <td>
+                    {{$role}}
+                </td>
+            </tr>
+            @endif
+            @endforeach
+            @endcan
+
+            @can('users_destroy')
             @foreach($roles as $id=>$role)
             <tr>
                 <td>
@@ -46,8 +58,12 @@
                 </td>
             </tr>
             @endforeach
+            @endcan
         </tbody>
     </table>
 </div>
 
-<button type="submit" class="btn btn-primary">Submit</button>
+<div class="modal-footer justify-content-between">
+    <a href="{{ url('/users') }}" class="btn btn-primary"><i class="fas fa-undo-alt"></i> Atras</a>
+    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar</button>
+</div>

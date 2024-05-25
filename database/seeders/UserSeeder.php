@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
             'name'=>'Nestor Catari',
             'email'=>'firrewall2000@gmail.com',
             'password'=>bcrypt('Catmam46501'),
-        ])->assignRole('Admin');
+        ])->assignRole('AdminSistema');
         
         //User::factory(99)->create();
     }

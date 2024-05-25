@@ -7,9 +7,19 @@
 @endsection
 
 @section('content')
-
-</br>
-<div class="card">
+<div class="card card-warning">
+    <div class="card-header">
+        <table width=100%>
+            <tr>
+                <td align="left" width=5%>
+                    <h2><i class="fas fa-money-bill-alt"></i></h2>
+                </td>
+                <td align="center">
+                    <h2>VIATICOS</h2>
+                </td>
+            </tr>
+        </table>
+    </div>
     <div class="card-body">
 
         @if(Session::has('mensaje'))
@@ -20,14 +30,19 @@
             </button>
         </div>
         @endif
-        <h1>
-            <center>VIATICOS</center>
-        </h1>
-        @include('viatico.create',[$id])
+
+        <a href="{{ url('viatico/create/'.$id) }}" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Nuevo
+        </a>
+        @can('viaticos_pdf')
+        <a href="{{ url('/registroViaticos/pdf/'.$id) }}" class="btn btn-dark" onclick="alerta();">
+            <i class="far fa-file-pdf"></i> Reporte
+        </a>
+        @endcan
         <div class="table-responsive">
             </br>
             <table class="table table-striped" id="datosCctv">
-                <thead>
+                <thead class="table-dark">
                     <tr>
                         <th>ID</th>
                         <th>Codigo</th>
@@ -45,16 +60,25 @@
                         <td>{{ $viatico->codigo}}</td>
                         <td>{{ $viatico->detalle}}</td>
                         <td>{{ \Carbon\Carbon::parse($viatico->fecha)->format('d-m-Y')}}</td>
-                        <td>{{ $viatico->monto}}</td>
+                        @foreach($totals as $total)
+                        @if($viatico->codigo == $total->codigo)
+                        <td>{{ $total->suma}}</td>
+                        @break
+                        @endif
+                        @endforeach
                         <td>
                             @can('viaticos_edit')
-                            @include('viatico.edit', compact($viatico -> id))
+                            <a href="{{ url('/viaticos/'.$viatico->id.'/edit') }}" class="btn btn-warning">
+                                <i class="fas fa-pen"></i>
+                            </a>
                             @endcan
                             @can('viaticos_destroy')
-                            <form action="{{ url('/viaticos/'.$viatico->id) }}" class="d-inline" method="post">
+                            <form action="{{ url('/viaticos/'.$viatico->id) }}" class="d-inline formulario-eliminar" method="post">
                                 @csrf
                                 {{method_field('DELETE')}}
-                                <input class="btn btn-danger" type="submit" onclick="return confirm('¿Quieres borrar?')" value="Borrar">
+                                <button class="btn btn-danger" type="submit">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </form>
                             @endcan
                         </td>
@@ -65,7 +89,7 @@
             </table>
         </div>
         </br>
-        <a href="{{ url('/descargos/') }}" class="btn btn-success">Guardar Datos</a>
+        <a href="{{ url('/descargos/') }}" class="btn btn-primary"><i class="fas fa-undo-alt"></i> Atras</a>
     </div>
 </div>
 @endsection
@@ -76,10 +100,93 @@
 <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+
+@include('sweetalert::alert')
+
+@if (session('eliminar') == 'ok')
+<script>
+    Swal.fire(
+        'Eliminado!',
+        'El registro se elimino con éxito.',
+        'success'
+    )
+</script>
+@endif
+
+@if (session('nuevo') == 'ok')
+<script>
+    Swal.fire(
+        'Guardado!',
+        'El registro se guardo con éxito.',
+        'success'
+    )
+</script>
+@endif
+
+@if (session('actualizar') == 'ok')
+<script>
+    Swal.fire(
+        'Actualizado!',
+        'El registro se actualizo con éxito.',
+        'success'
+    )
+</script>
+@endif
+
+<script type="text/javascript">
+    function alerta() {
+        let timerInterval
+        Swal.fire({
+            title: 'Lo estamos preparando!',
+            icon: 'success',
+            html: 'Aguarde un momento por favor',
+            timer: 5000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading()
+                const b = Swal.getHtmlContainer().querySelector('b')
+                timerInterval = setInterval(() => {
+                    b.textContent = Swal.getTimerLeft()
+                }, 100)
+            },
+            willClose: () => {
+                clearInterval(timerInterval)
+            }
+        }).then((result) => {
+            /* Read more about handling dismissals below */
+            if (result.dismiss === Swal.DismissReason.timer) {
+                console.log('I was closed by the timer')
+            }
+        })
+    }
+</script>
+
+<script>
+    $('.formulario-eliminar').submit(function(e) {
+        e.preventDefault();
+        Swal.fire({
+            title: '¿Estas seguro?',
+            text: "Este registro se eliminara definitivamente!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, eliminar!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit();
+            }
+        })
+    });
+</script>
+
+
 <script>
     $('#datosCctv').DataTable({
-        responsive: true,
+        responsive: false,
         autoWidth: false,
+        "order": [[0,'desc']],
         "language": {
             "lengthMenu": "Mostrar " +
                 `<select class="custom-selec custom-select-sm form-control form-control-sm">

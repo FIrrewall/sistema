@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Inventarios;
 
 use App\Http\Controllers\Controller;
 use App\Models\Salida;
+use App\Models\Producto;
+use App\Models\Inventari;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use PDF;
+
 class SalidaController extends Controller
 {
     /**
@@ -16,9 +20,14 @@ class SalidaController extends Controller
     public function index($id)
     {
         abort_if(Gate::denies('salidas_index'),403);
-
         $datos['salidas']=Salida::all();
-        return view('salida.index',$datos,compact('id'));
+        $inve = Inventari::all();
+        foreach ($inve as $inv) {
+            if ($id == $inv->id) {
+                $resul = $inv->descripcion;
+            }
+        }
+        return view('salida.index',$datos,compact('id','resul'));
     }
 
     /**
@@ -26,10 +35,30 @@ class SalidaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id)
     {
         abort_if(Gate::denies('salidas_create'),403);
-        return view('salida.create');
+        $producto['productos']= Producto::all();
+        $inve = Inventari::all();
+        foreach ($inve as $inv) {
+            if ($id == $inv->id) {
+                $resul = $inv->descripcion;
+            }
+        }
+        return view('salida.create',$producto,compact('id','resul'));
+    }
+
+    public function pdf($id)
+    {
+        abort_if(Gate::denies('salidas_pdf'),403);
+        $salidas = Salida::all();
+        $inventarios = Inventari::all();
+        $pdf = PDF::loadView('salida.pdf', ['salidas' => $salidas, 'resId' => $id, 'inventarios' => $inventarios]);
+        $pdf->setPaper('carta', 'landscape');
+        //$pdf->render();
+        //return $pruebas;
+        return $pdf->stream();
+        //return view('informe.pdf',compact('informes'));
     }
 
     /**
@@ -41,13 +70,12 @@ class SalidaController extends Controller
     public function store(Request $request)
     {
         $campos=[
-            'nombreProyecto'=>'required|string|max:1000',
-            'numeroNota'=>'required|integer|max:1000',
+            'nombreProyecto'=>'required|string|max:100000000',
+            'numeroNotaSal'=>'required|integer|max:100000000',
             'fecha'=>'required|date_format:Y-m-d',
-            'codigo'=>'required|string|max:1000',
-            'descripcion'=>'required|string|max:1000',
-            'numeroSerie'=>'required|string|max:1000',
-            'cantidad'=>'required|integer|max:10000'
+            'codigoSal'=>'required|string|max:1000',
+            'descripcionSal'=>'required|string|max:1000',
+            'cantidadSal'=>'required|integer|max:10000'
         ];
         $mensaje =[
             'required'=>':attribute es requerido'
@@ -61,7 +89,7 @@ class SalidaController extends Controller
         
         Salida::insert($datosSalida);
         $post = request()->input('inventari_id');
-        return redirect('/salidaInventario/'.$post)->with('mensaje');
+        return redirect('/salidaInventario/'.$post)->with('nuevo','ok');
     }
 
     /**
@@ -85,8 +113,14 @@ class SalidaController extends Controller
     {
         abort_if(Gate::denies('salidas_edit'),403);
         $salida=Salida::findOrFail($id);
-
-        return view('salida.edit', compact('salida'));
+        $producto['productos']= Producto::all();
+        $inve = Inventari::all();
+        foreach ($inve as $inv) {
+            if ($salida->inventari_id == $inv->id) {
+                $resul = $inv->descripcion;
+            }
+        }
+        return view('salida.edit',$producto,compact('salida','resul'));
     }
 
     /**
@@ -104,7 +138,7 @@ class SalidaController extends Controller
         Salida::where('id', '=' , $id)->update($datosSalida);
 
         $post = request()->input('inventari_id');
-        return redirect('/salidaInventario/'.$post)->with('mensaje');
+        return redirect('/salidaInventario/'.$post)->with('actualizar','ok');
     }
 
     /**
@@ -120,7 +154,7 @@ class SalidaController extends Controller
         $salida = Salida::findOrFail($id);
         $idIn = $salida->inventari_id;
         Salida::destroy($id);
-        return redirect('/salidaInventario/'.$idIn)->with('mensaje');
+        return redirect('/salidaInventario/'.$idIn)->with('eliminar','ok');
     }
 
 }

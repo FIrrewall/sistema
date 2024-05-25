@@ -41,7 +41,7 @@ class PermissionController extends Controller
     public function store(Request $request)
     {
         Permission::create($request->only('name'));
-        return redirect('permissions')->with('Se guardo correctamente');
+        return redirect('permissions')->with('nuevo','ok');
     }
 
     /**
@@ -80,7 +80,7 @@ class PermissionController extends Controller
         $datosPermiso = request()->except(['_token','_method']);
         Permission::where('id', '=' , $id)->update($datosPermiso);
 
-        return redirect('permissions')->with('mensaje','Permiso modificado');
+        return redirect('permissions')->with('actualizar','ok');
     }
 
     /**
@@ -93,6 +93,6 @@ class PermissionController extends Controller
     {
         abort_if(Gate::denies('permissions_destroy'),403);
         Permission::destroy($id);
-        return redirect('permissions')->with('mensaje','Permiso eliminado');
+        return redirect('permissions')->with('eliminar','ok');
     }
 }

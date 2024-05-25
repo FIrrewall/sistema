@@ -55,7 +55,7 @@ class InventariController extends Controller
         //Empleado::insert($datosEmpleado);
         
         Inventari::insert($datosInventario);
-        return redirect('inventarios')->with('mensaje');
+        return redirect('inventarios')->with('nuevo','ok');
         //return view('hdds/{$informes->id}')->with('mensaje');
     }
 
@@ -99,7 +99,7 @@ class InventariController extends Controller
         
         Inventari::where('id', '=' , $id)->update($datosInventario);
 
-        return redirect('inventarios')->with('mensaje','Resumen modificado');
+        return redirect('inventarios')->with('actualizar','ok');
     }
 
     /**
@@ -114,6 +114,6 @@ class InventariController extends Controller
 
         Inventari::destroy($id);
         
-        return redirect('inventarios')->with('mensaje','Inventario borrado');
+        return redirect('inventarios')->with('eliminar','ok');
     }
 }

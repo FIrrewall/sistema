@@ -44,7 +44,7 @@ class RolesController extends Controller
     {
         $role = Role::create($request->only('name'));
         $role->syncPermissions($request->input('permissions',[]));
-        return redirect('roles')->with('Se guardo correctamente');
+        return redirect('roles')->with('nuevo','ok');
     }
 
     /**
@@ -86,7 +86,7 @@ class RolesController extends Controller
         $role->permissions()->sync($request->input('permissions',[]));
 
 
-        return redirect('roles')->with('mensaje','Permiso modificado');
+        return redirect('roles')->with('actualizar','ok');
     }
 
     /**
@@ -99,6 +99,6 @@ class RolesController extends Controller
     {
         abort_if(Gate::denies('roles_destroy'),403);
         $role->delete();
-        return redirect('roles')->with('mensaje','Permiso eliminado');
+        return redirect('roles')->with('eliminar','ok');
     }
 }

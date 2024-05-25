@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Requests\ChangePasswordRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
     /**
@@ -17,8 +18,14 @@ class UserController extends Controller
     {
         abort_if(Gate::denies('users_index'),403);
         $users = User::all();
+
+        $usuario = auth()->user();
+
+        //return $usuario;
         //$permissions = Permission::all()->pluck('name', 'id');
         return view('users.index', compact('users'));
+
+        //return dd($usuario->name);
     }
 
     /**
@@ -51,7 +58,7 @@ class UserController extends Controller
 
         $roles = $request->input('roles',[]);
         $user->syncRoles($roles); 
-        return redirect('users')->with('Usuario creado correctamente correctamente');
+        return redirect('users')->with('nuevo','ok');
     }
 
     /**
@@ -93,7 +100,7 @@ class UserController extends Controller
         //$roles->permissions()->sync($request->input('permissions',[]));
         $user->syncRoles($roles);
 
-        return redirect('users')->with('mensaje','Permiso modificado');
+        return redirect('users')->with('actualizar','ok');
     }
 
     /**
@@ -102,14 +109,31 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
         abort_if(Gate::denies('users_destroy'),403);
-        if (auth()->user()->id = $user->id)
+        /*if (auth()->user()->id = $user->id)
         {
             return redirect('users');            
-        }
-        $user->delete();
-        return redirect('users')->with('mensaje','Permiso eliminado');
+        }*/
+        //$user->delete();
+        User::destroy($id);
+        return redirect('users')->with('eliminar','ok');
     }
+
+    /*public function mostrar()
+    {
+        $usuario = auth()->user();
+        return view('users.cambio',compact('usuario'));
+    }
+
+
+    public function cambioPassword(ChangePasswordRequest $request, User $user)
+    {
+        dd();
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+        return view('users');
+    }*/
 }

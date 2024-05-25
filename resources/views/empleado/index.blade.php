@@ -102,3 +102,12 @@
     });
 </script>
 @endsection
+
+
+
+@foreach($salidas as $salida)
+                        @if($salida->codigoSal == $existente->codigoProducto)
+                        <td>{{$salida->cantidadSalida}}</td>
+                        @break
+                        @endif
+                        @endforeach
